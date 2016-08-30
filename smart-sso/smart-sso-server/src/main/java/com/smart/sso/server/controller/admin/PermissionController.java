@@ -86,7 +86,7 @@ public class PermissionController extends BaseController {
 	public @ResponseBody Result delete(
 			@ValidateParam(name = "id", validators = { Validator.NOT_BLANK }) Integer id,
 			@ValidateParam(name = "应用ID", validators = { Validator.NOT_BLANK }) Integer appId) {
-		return Result.createErrorResult(permissionService.deletePermission(id, appId), "删除成功");
+		return Result.createSuccessResult(permissionService.deletePermission(id, appId), "删除成功");
 	}
 
 	private List<App> getAppList() {

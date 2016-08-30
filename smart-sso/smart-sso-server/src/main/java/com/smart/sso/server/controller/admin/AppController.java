@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.smart.mvc.controller.BaseController;
 import com.smart.mvc.model.Pagination;
 import com.smart.mvc.model.Result;
+import com.smart.mvc.model.ResultCode;
 import com.smart.mvc.validator.Validator;
 import com.smart.mvc.validator.annotation.ValidateParam;
 import com.smart.sso.server.model.App;
@@ -57,17 +58,17 @@ public class AppController extends BaseController {
 	public @ResponseBody Result list(@ValidateParam(name = "名称 ") String name,
 			@ValidateParam(name = "开始页码", validators = { Validator.NOT_BLANK }) Integer pageNo,
 			@ValidateParam(name = "显示条数 ", validators = { Validator.NOT_BLANK }) Integer pageSize) {
-		return Result.createSuccessResult(appService.findPaginationByName(name, new Pagination<App>(pageNo, pageSize)));
+		return Result.createSuccessResult().setData(appService.findPaginationByName(name, new Pagination<App>(pageNo, pageSize)));
 	}
 
 	@RequestMapping(value = "/validateCode", method = RequestMethod.POST)
 	public @ResponseBody Result validateCode(@ValidateParam(name = "id") Integer id,
 			@ValidateParam(name = "应用编码 ", validators = { Validator.NOT_BLANK }) String code) {
-		Result result=Result.createSuccessResult();
+		Result result = Result.createSuccessResult();
 		if (StringUtils.isNotBlank(code)) {
 			App db = appService.findByCode(code);
 			if (null != db && !db.getId().equals(id)) {
-				result=Result.createErrorResult("应用编码已存在");
+				result.setStatus(ResultCode.ERROR).setMessage("应用编码已存在");
 			}
 		}
 		return result;
@@ -104,7 +105,7 @@ public class AppController extends BaseController {
 
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public @ResponseBody Result delete(@ValidateParam(name = "ids", validators = { Validator.NOT_BLANK }) String ids) {
-		return Result.createSuccessResult(appService.deleteById(getAjaxIds(ids)));
+		return Result.createSuccessResult().setData(appService.deleteById(getAjaxIds(ids)));
 	}
 	
 	@RequestMapping(value = "/sync/permissions", method = RequestMethod.POST)

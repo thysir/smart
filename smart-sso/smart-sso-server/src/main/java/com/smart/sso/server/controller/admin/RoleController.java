@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.smart.mvc.controller.BaseController;
-import com.smart.mvc.model.Pagination;
 import com.smart.mvc.model.Result;
+import com.smart.mvc.model.Pagination;
 import com.smart.mvc.validator.Validator;
 import com.smart.mvc.validator.annotation.ValidateParam;
 import com.smart.sso.server.model.App;
@@ -65,7 +65,7 @@ public class RoleController extends BaseController {
 			@ValidateParam(name = "应用ID ") Integer appId,
 			@ValidateParam(name = "开始页码", validators = { Validator.NOT_BLANK }) Integer pageNo,
 			@ValidateParam(name = "显示条数 ", validators = { Validator.NOT_BLANK }) Integer pageSize) {
-		return Result.createSuccessResult(roleService.findPaginationByName(name, appId, new Pagination<Role>(pageNo, pageSize)));
+		return Result.createSuccessResult().setData(roleService.findPaginationByName(name, appId, new Pagination<Role>(pageNo, pageSize)));
 	}
 
 	@RequestMapping(value = "/enable", method = RequestMethod.POST)
@@ -102,7 +102,7 @@ public class RoleController extends BaseController {
 	@RequestMapping(value = "/allocate", method = RequestMethod.GET)
 	public @ResponseBody Result allocate(
 			@ValidateParam(name = "角色ID", validators = { Validator.NOT_BLANK }) Integer roleId) {
-		return Result.createSuccessResult(rolePermissionService.findByRoleId(roleId));
+		return Result.createSuccessResult().setData(rolePermissionService.findByRoleId(roleId));
 	}
 	
 	@RequestMapping(value = "/allocateSave", method = RequestMethod.POST)
@@ -113,15 +113,15 @@ public class RoleController extends BaseController {
 		List<Integer> idList = getAjaxIds(permissionIds);
 		List<RolePermission> list = new ArrayList<RolePermission>();
 		Integer permissionId;
-		for (Iterator<Integer> i$ = idList.iterator(); i$.hasNext(); list.add(new RolePermission(appId, roleId, permissionId))){
+		for (Iterator<Integer> i$ = idList.iterator(); i$.hasNext(); list.add(new RolePermission(appId, roleId, permissionId))) {
 			permissionId = i$.next();
 		}
-		return Result.createSuccessResult(rolePermissionService.allocate(roleId, list),"授权成功");
+		return Result.createSuccessResult(rolePermissionService.allocate(roleId, list), "授权成功");
 	}
 
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public @ResponseBody Result delete(@ValidateParam(name = "ids", validators = { Validator.NOT_BLANK }) String ids) {
-		return Result.createSuccessResult(roleService.deleteById(getAjaxIds(ids)));
+		return Result.createSuccessResult().setData(roleService.deleteById(getAjaxIds(ids)));
 	}
 
 	private List<App> getAppList() {

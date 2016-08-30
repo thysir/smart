@@ -1,116 +1,116 @@
 package com.smart.mvc.model;
 
 /**
- * <b>Description:结果体</b><br>
- * @author 唐海洋
- * @version 1.0 2016-8-17 下午5:37:44
+ * 返回结果
+ * 
+ * @author Joe
  */
 public class Result {
 
-	private Integer status = ResultCode.SUCCESS;
-	private Object attach;
-	private String message;
-	
+	/**
+	 * 结果体
+	 */
+	protected Object data;
+
+	/**
+	 * 状态码
+	 */
+	protected String status;
+
+	/**
+	 * 信息
+	 */
+	protected String message;
+
 	private Result() {
 		super();
 	}
-	
-	private Result(Integer status,Object data, String message) {
-		this.status=status;
-		this.attach=data;
-		this.message=message;
+
+	private Result(String status) {
+		this.status = status;
 	}
-	
-	/**
-	 * Description:创建一个成功的结果体
-	 * @author 唐海洋
-	 * @Version 1.0 2016-8-24下午10:05:30 
-	 * @return
-	 */
-	public static Result createSuccessResult(){
-		return createSuccessResult(null,null);
+
+	public static Result create(String status) {
+		return new Result(status);
 	}
 
 	/**
 	 * Description:创建一个成功的结果体
+	 * 
 	 * @author 唐海洋
-	 * @Version 1.0 2016-8-24下午10:06:20 
-	 * @param data 将要返回的数据
+	 * @Version 1.0 2016-8-24下午10:05:30
 	 * @return
 	 */
-	public static Result createSuccessResult(Object data){
-		return createSuccessResult(data,null);
+	public static Result createSuccessResult() {
+		return create(ResultCode.SUCCESS);
 	}
-	
+
 	/**
 	 * Description:创建一个成功的结果体
+	 * 
 	 * @author 唐海洋
-	 * @Version 1.0 2016-8-24下午10:06:43 
-	 * @param data 将要返回的数据
-	 * @param message 消息信息
+	 * @Version 1.0 2016-8-24下午10:06:43
+	 * @param data
+	 *            将要返回的数据
+	 * @param message
+	 *            消息信息
 	 * @return
 	 */
-	public static Result createSuccessResult(Object data,String message){
-		return new Result(ResultCode.SUCCESS,data,message);
+	public static Result createSuccessResult(Object data, String message) {
+		return createSuccessResult().setData(message).setMessage(message);
 	}
-	
+
 	/**
 	 * Description:创建一个默认的错误结果体
+	 * 
 	 * @author 唐海洋
-	 * @Version 1.0 2016-8-24下午10:07:09 
+	 * @Version 1.0 2016-8-24下午10:07:09
 	 * @return
 	 */
-	public static Result createErrorResult(){
-		return createErrorResult(null,null);
+	public static Result createErrorResult() {
+		return create(ResultCode.ERROR);
 	}
-	
+
 	/**
 	 * Description:创建一个错误的结果体
+	 * 
 	 * @author 唐海洋
-	 * @Version 1.0 2016-8-24下午10:07:09 
-	 * @param message 消息信息
+	 * @Version 1.0 2016-8-24下午10:07:46
+	 * @param data
+	 *            将要返回的数据
+	 * @param message
+	 *            消息信息
 	 * @return
 	 */
-	public static Result createErrorResult(String message){
-		return createErrorResult(null,message);
+	public static Result createErrorResult(Object data, String message) {
+		return createErrorResult().setData(message).setMessage(message);
 	}
-	
-	/**
-	 * Description:创建一个错误的结果体
-	 * @author 唐海洋
-	 * @Version 1.0 2016-8-24下午10:07:46 
-	 * @param data 将要返回的数据
-	 * @param message 消息信息
-	 * @return
-	 */
-	public static Result createErrorResult(Object data,String message){
-		return new Result(ResultCode.ERROR,data,message);
-	}
-	
+
 	/**
 	 * Description:判断该结果体是否是处理成功状态
+	 * 
 	 * @author 唐海洋
-	 * @Version 1.0 2016-8-24下午10:08:24 
+	 * @Version 1.0 2016-8-24下午10:08:24
 	 * @return
 	 */
-	public boolean isSuccess(){
+	public boolean isSuccess() {
 		return ResultCode.SUCCESS.equals(this.status);
 	}
 
-	public Object getAttach() {
-		return attach;
+	public Object getData() {
+		return data;
 	}
 
-	public Result setAttach(Object attach) {
-		this.attach = attach;
+	public Result setData(Object data) {
+		this.data = data;
 		return this;
 	}
 
-	public Integer getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public Result setStatus(Integer status) {
+	public Result setStatus(String status) {
 		this.status = status;
 		return this;
 	}

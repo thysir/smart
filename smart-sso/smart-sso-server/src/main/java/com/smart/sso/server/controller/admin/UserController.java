@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.smart.mvc.config.ConfigUtils;
 import com.smart.mvc.controller.BaseController;
 import com.smart.mvc.exception.ValidateException;
-import com.smart.mvc.model.Pagination;
 import com.smart.mvc.model.Result;
+import com.smart.mvc.model.Pagination;
+import com.smart.mvc.model.ResultCode;
 import com.smart.mvc.provider.PasswordProvider;
 import com.smart.mvc.validator.Validator;
 import com.smart.mvc.validator.annotation.ValidateParam;
@@ -70,7 +71,7 @@ public class UserController extends BaseController {
 			@ValidateParam(name = "应用ID ") Integer appId,
 			@ValidateParam(name = "开始页码", validators = { Validator.NOT_BLANK }) Integer pageNo,
 			@ValidateParam(name = "显示条数 ", validators = { Validator.NOT_BLANK }) Integer pageSize) {
-		return Result.createSuccessResult(userService.findPaginationByAccount(account, appId, new Pagination<User>(pageNo, pageSize)));
+		return Result.createSuccessResult().setData(userService.findPaginationByAccount(account, appId, new Pagination<User>(pageNo, pageSize)));
 	}
 
 	@RequestMapping(value = "/validateCode", method = RequestMethod.POST)
@@ -82,7 +83,7 @@ public class UserController extends BaseController {
 		if (StringUtils.isNotBlank(account)) {
 			User user = userService.findByAccount(account);
 			if (null != user && !user.getId().equals(id)) {
-				result=Result.createErrorResult("登录名已存在");
+				result.setStatus(ResultCode.ERROR).setMessage("登录名已存在");
 			}
 		}
 		return result;
@@ -129,7 +130,7 @@ public class UserController extends BaseController {
 
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public @ResponseBody Result delete(@ValidateParam(name = "ids", validators = { Validator.NOT_BLANK }) String ids) {
-		return Result.createSuccessResult(userService.deleteById(getAjaxIds(ids)));
+		return Result.createSuccessResult().setData(userService.deleteById(getAjaxIds(ids)));
 	}
 
 	private List<App> getAppList() {

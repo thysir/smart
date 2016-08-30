@@ -47,6 +47,6 @@ public class ProfileController extends BaseController {
 						request.getSession().getAttribute(Permissionable.SESSION_TOKEN).toString(), newPassword))
 			return Result.createSuccessResult().setMessage("修改成功");
 		else
-			return Result.createErrorResult("修改失败");
+			return Result.createErrorResult().setMessage("修改失败");
 	}
 }
