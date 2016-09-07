@@ -51,4 +51,19 @@ public interface AuthenticationRpcService {
 	 * @return
 	 */
 	public boolean updatePassword(String token, String newPassword);
+	
+	/**
+	 * 更新当前登录用户密码
+	 * 
+	 * @param token
+	 *            授权码
+	 * @param appCode
+	 *            应用编码
+	 * @param account
+	 *            账号
+	 * @param password
+	 *            密码
+	 * @return
+	 */
+	public boolean regiestUser(String token, String appCode, String account, String password);
 }
