@@ -53,7 +53,6 @@ public interface AuthenticationRpcService {
 	public boolean updatePassword(String token, String newPassword);
 	
 	/**
-<<<<<<< HEAD
 	 * 注册新用户
 	 * 
 	 * @param token
@@ -86,36 +85,4 @@ public interface AuthenticationRpcService {
 	public boolean regiestAndAuthorize(String token, String appCode, String account,
 			String password, String[] roleCodes);
 	
-	/**
-	 * 注册账号
-	 * 
-	 * @param token
-	 *            授权码
-	 * @param appCode
-	 *            应用编码
-	 * @param account
-	 *            账号
-	 * @param password
-	 *            密码
-	 * @return
-	 */
-	public boolean regiestUser(String token, String appCode, String account, String password);
-	
-	/**
-	 * 注册账号
-	 * 
-	 * @param token
-	 *            授权码
-	 * @param appCode
-	 *            应用编码
-	 * @param account
-	 *            账号
-	 * @param password
-	 *            密码
-	 * @param roleCodes
-	 *            将要授权的角色编码
-	 * @return
-	 */
-	public boolean regiestAndAuthorize(String token, String appCode, String account,
-			String password, String[] roleCodes);
 }
