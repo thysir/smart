@@ -26,6 +26,7 @@ import com.smart.sso.server.service.PermissionService;
 import com.smart.sso.server.service.RoleService;
 import com.smart.sso.server.service.UserAppService;
 import com.smart.sso.server.service.UserRoleService;
+import com.smart.sso.server.service.UserAppService;
 import com.smart.sso.server.service.UserService;
 import com.smart.util.StringUtils;
 import com.smart.util.ValidateUtils;
