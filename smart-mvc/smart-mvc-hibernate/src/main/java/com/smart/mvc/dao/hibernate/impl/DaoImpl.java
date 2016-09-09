@@ -121,17 +121,18 @@ public abstract class DaoImpl<T, ID extends Serializable> implements Dao<T, ID> 
 			Object... values) {
 		
 		// 查询总记录数,hql语句一定要写别名
-		long rowCount = (Long) createHqlQuery(queryCountByHql(hql), cacheAble,
-				values).uniqueResult();
-		if (rowCount <= 0)
-			return null;
+		long rowCount = (Long) createHqlQuery(queryCountByHql(hql), cacheAble,values).uniqueResult();
+		List<T> listData=null;
+		if (rowCount <= 0){
+			listData=new ArrayList<T>(1);
+		}else{
+			Query query = createHqlQuery(hql,cacheAble,values);
+			query.setFirstResult(p.getFirstResult());
+			query.setMaxResults(p.getPageSize());
+			listData=query.list();
+		}
 		p.setRowCount(rowCount);
-
-		// 查询当前页记录
-		Query query = createHqlQuery(hql,cacheAble,values);
-		query.setFirstResult(p.getFirstResult());
-		query.setMaxResults(p.getPageSize());
-		p.setList(query.list());
+		p.setList(listData);
 		return p.getList();
 	}
 
@@ -197,19 +198,23 @@ public abstract class DaoImpl<T, ID extends Serializable> implements Dao<T, ID> 
 		String countSql = (functionStr).concat(queryCountBySql(sql));
 
 		// 查询总记录数
-		long rowCount = Long.valueOf(createSqlQuery(countSql, false, values)
-				.uniqueResult().toString());
-		if (rowCount <= 0)
-			return null;
+		long rowCount = Long.valueOf(createSqlQuery(countSql, false, values).uniqueResult().toString());
+		List<T> listData=null;
+		if (rowCount <= 0){
+			listData=new ArrayList<T>(1);
+		}else{
+			// 为递归查询添加前缀方法
+			String querySql = (functionStr).concat(sql.toString());
+			// 查询当前页记录
+			SQLQuery query = createSqlQuery(querySql, entityClass, cacheAble,values);
+			query.setFirstResult(p.getFirstResult());
+			query.setMaxResults(p.getPageSize());
+			listData=query.list();
+		}
+		
 		p.setRowCount(rowCount);
-
-		// 为递归查询添加前缀方法
-		String querySql = (functionStr).concat(sql.toString());
-		// 查询当前页记录
-		SQLQuery query = createSqlQuery(querySql, entityClass, cacheAble,values);
-		query.setFirstResult(p.getFirstResult());
-		query.setMaxResults(p.getPageSize());
-		p.setList(query.list());
+		p.setList(listData);
+		
 		return p.getList();
 	}
 

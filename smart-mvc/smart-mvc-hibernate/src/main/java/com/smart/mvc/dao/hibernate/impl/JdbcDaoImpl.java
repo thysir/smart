@@ -2,6 +2,7 @@ package com.smart.mvc.dao.hibernate.impl;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -76,18 +77,21 @@ public abstract class JdbcDaoImpl implements JdbcDao, Serializable {
 		
 		// 查询总记录数
 		long rowCount = Long.valueOf(getSqlQuery(countSql, false, values).uniqueResult().toString());
-		if (rowCount <= 0) return null;
+		List<T> listData=null;
+		if (rowCount <= 0){
+			listData=new ArrayList<T>(1);
+		}else{
+			// 为递归查询添加前缀方法
+			String querySql = (functionStr).concat(sql.toString());
+			
+			// 查询当前页记录
+			SQLQuery query =getSqlquery(querySql, Transformers.ALIAS_TO_ENTITY_MAP, values);			
+			query.setFirstResult(pagination.getFirstResult());
+			query.setMaxResults(pagination.getPageSize());
+			listData=query.addEntity(entityClass).list();
+		}
 		pagination.setRowCount(rowCount);
-		
-		// 为递归查询添加前缀方法
-		String querySql = (functionStr).concat(sql.toString());
-		
-		// 查询当前页记录
-		SQLQuery query =getSqlquery(querySql, Transformers.ALIAS_TO_ENTITY_MAP, values);			
-		query.setFirstResult(pagination.getFirstResult());
-		query.setMaxResults(pagination.getPageSize());
-		//返回实体分页对象
-		pagination.setList(query.addEntity(entityClass).list());
+		pagination.setList(listData);
 		
 		return pagination.getList();
 	}
@@ -189,18 +193,22 @@ public abstract class JdbcDaoImpl implements JdbcDao, Serializable {
 		
 		// 查询总记录数
 		long rowCount = Long.valueOf(getSqlQuery(countSql, false, values).uniqueResult().toString());
-		if (rowCount <= 0) return null;
+		List<Object> listData=null;
+		if (rowCount <= 0){
+			listData=new ArrayList<Object>(1);
+		}else{
+			// 为递归查询添加前缀方法
+			String querySql = (functionStr).concat(sql.toString());
+			
+			// 查询当前页记录
+			SQLQuery query =getSqlquery(querySql, Transformers.ALIAS_TO_ENTITY_MAP, values);			
+			query.setFirstResult(pagination.getFirstResult());
+			query.setMaxResults(pagination.getPageSize());
+			listData=query.list();
+			
+		}
 		pagination.setRowCount(rowCount);
-		
-		// 为递归查询添加前缀方法
-		String querySql = (functionStr).concat(sql.toString());
-		
-		// 查询当前页记录
-		SQLQuery query =getSqlquery(querySql, Transformers.ALIAS_TO_ENTITY_MAP, values);			
-		query.setFirstResult(pagination.getFirstResult());
-		query.setMaxResults(pagination.getPageSize());
-		
-		pagination.setList(query.list());
+		pagination.setList(listData);
 		
 		return pagination.getList();
 	}
