@@ -142,14 +142,10 @@ public abstract class DaoImpl<T, ID extends Serializable> implements Dao<T, ID> 
 	 * @Version 1.0 2015-8-13下午4:56:09 
 	 * @param sql 查询语句
 	 * @param cacheAble 是否使用查询缓存
-	 * @param function with语句
 	 * @param values 查询参数值
 	 * @return
 	 */
-	protected List<T> findByRecursionSql(String sql, boolean cacheAble,
-			String function, Object... values) {
-		// 为递归查询添加前缀方法
-		sql = (function == null ? "" : function).concat(" ").concat(sql);
+	protected List<T> findByRecursionSql(String sql, boolean cacheAble, Object... values) {
 		return createSqlQuery(sql, entityClass, cacheAble, values).list();
 	}
 
@@ -163,7 +159,7 @@ public abstract class DaoImpl<T, ID extends Serializable> implements Dao<T, ID> 
 	 * @return
 	 */
 	protected List<T> findBySql(String sql, boolean cacheAble, Object... values) {
-		return findByRecursionSql(sql, cacheAble, null, values);
+		return findByRecursionSql(sql, cacheAble, values);
 	}
 
 	/**
@@ -186,16 +182,13 @@ public abstract class DaoImpl<T, ID extends Serializable> implements Dao<T, ID> 
 	 * @param sql 查询语句
 	 * @param cacheAble 是否使用查询缓存
 	 * @param p 分页对象
-	 * @param function with语句
 	 * @param values 查询参数值
 	 * @return
 	 */
 	protected List<T> pageByRecursionSql(String sql, boolean cacheAble,
-			Pagination p, String function, Object... values) {
+			Pagination p, Object... values) {
 
-		// 为递归查询添加前缀方法
-		String functionStr = (function == null ? "" : function).concat(" ");
-		String countSql = (functionStr).concat(queryCountBySql(sql));
+		String countSql = queryCountBySql(sql);
 
 		// 查询总记录数
 		long rowCount = Long.valueOf(createSqlQuery(countSql, false, values).uniqueResult().toString());
@@ -203,10 +196,8 @@ public abstract class DaoImpl<T, ID extends Serializable> implements Dao<T, ID> 
 		if (rowCount <= 0){
 			listData=new ArrayList<T>(1);
 		}else{
-			// 为递归查询添加前缀方法
-			String querySql = (functionStr).concat(sql.toString());
 			// 查询当前页记录
-			SQLQuery query = createSqlQuery(querySql, entityClass, cacheAble,values);
+			SQLQuery query = createSqlQuery(sql.toString(), entityClass, cacheAble,values);
 			query.setFirstResult(p.getFirstResult());
 			query.setMaxResults(p.getPageSize());
 			listData=query.list();
@@ -230,7 +221,7 @@ public abstract class DaoImpl<T, ID extends Serializable> implements Dao<T, ID> 
 	 */
 	protected List<T> pageBySql(String sql, boolean cacheAble, Pagination p,
 			Object... values) {
-		return pageByRecursionSql(sql, cacheAble, p, null, values);
+		return pageByRecursionSql(sql, cacheAble, p, values);
 	}
 
 	//===================================

@@ -56,12 +56,11 @@ public interface JdbcDao extends Serializable {
 	 * Sql分页查询
 	 * @param pagination
 	 * @param sql
-	 * @param function
 	 * @param values
 	 * @return List<Map<String, Object>>
 	 */
 	List<Map<String, Object>> pageSqlMapQuery(Pagination<?> pagination,
-			String sql, String function, Object... values);
+			String sql, Object... values);
 
 	/**
 	 * 通过参数值执行SQL语句更新数据
@@ -94,12 +93,11 @@ public interface JdbcDao extends Serializable {
 	 * @param entityClass 实体类型
 	 * @param sql
 	 * @param pagination
-	 * @param function
 	 * @param values
 	 * @return
 	 */
 	<T> List<T> pageByRecursionSql(Class<T> entityClass,String sql,
-			Pagination<T> pagination, String function, Object... values);
+			Pagination<T> pagination, Object... values);
 	
 	/**
 	 * Description:保存

@@ -56,9 +56,9 @@ public abstract class JdbcDaoImpl implements JdbcDao, Serializable {
 	
 	@Override
 	public List<Map<String, Object>> pageSqlMapQuery(Pagination<?> pagination,
-			String sql,String function, Object... values) {
+			String sql, Object... values) {
 		
-		return pageByRecursionSql(sql,pagination, function, values);
+		return pageByRecursionSql(sql,pagination, values);
 	}
 	
 	@Override
@@ -69,11 +69,10 @@ public abstract class JdbcDaoImpl implements JdbcDao, Serializable {
 	
 	@Override
 	public <T> List<T> pageByRecursionSql(Class<T> entityClass,String sql,
-			Pagination<T> pagination, String function, Object... values) {
+			Pagination<T> pagination, Object... values) {
 		
 		// 为递归查询添加前缀方法
-		String functionStr = (function == null ? "" : function).concat(" ");
-		String countSql = (functionStr).concat(queryCountBySql(sql));
+		String countSql = queryCountBySql(sql);
 		
 		// 查询总记录数
 		long rowCount = Long.valueOf(getSqlQuery(countSql, false, values).uniqueResult().toString());
@@ -81,11 +80,8 @@ public abstract class JdbcDaoImpl implements JdbcDao, Serializable {
 		if (rowCount <= 0){
 			listData=new ArrayList<T>(1);
 		}else{
-			// 为递归查询添加前缀方法
-			String querySql = (functionStr).concat(sql.toString());
-			
 			// 查询当前页记录
-			SQLQuery query =getSqlquery(querySql, Transformers.ALIAS_TO_ENTITY_MAP, values);			
+			SQLQuery query =getSqlquery(sql.toString(), Transformers.ALIAS_TO_ENTITY_MAP, values);			
 			query.setFirstResult(pagination.getFirstResult());
 			query.setMaxResults(pagination.getPageSize());
 			listData=query.addEntity(entityClass).list();
@@ -182,14 +178,12 @@ public abstract class JdbcDaoImpl implements JdbcDao, Serializable {
 	}
 	
 	private List<Map<String, Object>> pageByRecursionSql(String sql,
-			Pagination pagination, String function, Object... values) {
+			Pagination pagination, Object... values) {
 		
 		// 添加搜索条件
 		// sql = addSearchParams(sql, pagination);
 		
-		// 为递归查询添加前缀方法
-		String functionStr = (function == null ? "" : function).concat(" ");
-		String countSql = (functionStr).concat(queryCountBySql(sql));
+		String countSql = queryCountBySql(sql);
 		
 		// 查询总记录数
 		long rowCount = Long.valueOf(getSqlQuery(countSql, false, values).uniqueResult().toString());
@@ -197,11 +191,8 @@ public abstract class JdbcDaoImpl implements JdbcDao, Serializable {
 		if (rowCount <= 0){
 			listData=new ArrayList<Object>(1);
 		}else{
-			// 为递归查询添加前缀方法
-			String querySql = (functionStr).concat(sql.toString());
-			
 			// 查询当前页记录
-			SQLQuery query =getSqlquery(querySql, Transformers.ALIAS_TO_ENTITY_MAP, values);			
+			SQLQuery query =getSqlquery(sql.toString(), Transformers.ALIAS_TO_ENTITY_MAP, values);			
 			query.setFirstResult(pagination.getFirstResult());
 			query.setMaxResults(pagination.getPageSize());
 			listData=query.list();
