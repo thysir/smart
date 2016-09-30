@@ -4,18 +4,22 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.transform.Transformers;
+import org.springframework.util.CollectionUtils;
 
 import com.smart.mvc.dao.hibernate.Dao;
+import com.smart.mvc.exception.ApplicationException;
 import com.smart.mvc.model.Pagination;
 import com.smart.mvc.util.hibernate.DaoUtils;
-import com.smart.mvc.util.hibernate.ProPertyUtils;
 import com.smart.util.StringUtils;
 
 /**
@@ -329,6 +333,95 @@ public abstract class DaoImpl<T, ID extends Serializable> implements Dao<T, ID> 
 		}
 	}
 	
+	
+	
+
+	/**
+	 * Description:根据sql查询对象，支持任意对象，底层实现map到bean的转换
+	 * @author jason 
+	 * @param c 返回对象的类型
+	 * @param sql sql语句
+	 * @return 对象
+	 */
+	public <V> V findFirstBySql(Class<V> c,String sql, Object... values){
+
+		List<V> list=findListBySql(c,sql,values);
+		return CollectionUtils.isEmpty(list)?null:list.get(0);
+	}
+	
+	/**
+	 * Description:根据sql查询对象，支持任意对象，底层实现map到bean的转换
+	 * @author jason 
+	 * @param c 返回对象的类型
+	 * @param sql sql语句
+	 * @return 对象列表
+	 */
+	public <V> List<V> findListBySql(Class<V> c,String sql, Object... values){
+		
+		SQLQuery query=createSqlQuery(sql, false, values);
+		query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+		
+		List<Map<String, Object>> mapList=query.list();
+		if(CollectionUtils.isEmpty(mapList)){
+			return null;
+		}else{
+			List<V> r=new ArrayList(mapList.size());
+			for(Map<String, Object> item:mapList){
+				try {
+					V entityItem = c.newInstance();
+					BeanUtils.copyProperties(entityItem, item);
+					r.add(entityItem);				
+				} catch (Exception e) {
+					throw new ApplicationException(e);
+				} 
+			}
+			return r;
+		}
+	}
+	
+	/**
+	 * Description:根据sql查询对象，支持任意对象，底层实现map到bean的转换
+	 * @author jason 
+	 * @param c 返回对象的类型
+	 * @param sql sql语句
+	 * @return 对象列表
+	 */
+	public <V> List<V> pageBySql(Class<V> c, Pagination<V> p, String sql, Object... values){
+		
+		String countSql = queryCountBySql(sql);
+
+		// 查询总记录数
+		long rowCount = Long.valueOf(createSqlQuery(countSql, false, values).uniqueResult().toString());
+		List<V> list=null;
+		if (rowCount <= 0){
+			list=new ArrayList<V>(1);
+		}else{
+			// 查询当前页记录
+			SQLQuery query = createSqlQuery(sql.toString(),false,values);
+			query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+			
+			query.setFirstResult(p.getFirstResult());
+			query.setMaxResults(p.getPageSize());
+			List<Map<String, Object>> mapList=query.list();
+			
+			list=new ArrayList(mapList.size());
+			for(Map<String, Object> item:mapList){
+				try {
+					V entityItem = c.newInstance();
+					BeanUtils.copyProperties(entityItem, item);
+					list.add(entityItem);				
+				} catch (Exception e) {
+					throw new ApplicationException(e);
+				} 
+			}
+		}
+		
+		p.setRowCount(rowCount);
+		p.setList(list);
+		return p.getList();
+	}
+	
+	
 	/**
 	 * Description:生成hql查询条件
 	 * @author 唐海洋
@@ -344,28 +437,21 @@ public abstract class DaoImpl<T, ID extends Serializable> implements Dao<T, ID> 
 		if (property.length != values.length) {
 			throw new IndexOutOfBoundsException("属性值长度与对应值不匹配");
 		}
-		String[] cachePro = property;
 		StringBuffer hql = new StringBuffer(" from "+ entityClass.getSimpleName() + " t where 1=1 ");
 		for (int i = 0; i < property.length; i++) {
-			
-			String s = ProPertyUtils.valProperty(entityClass, property[i]);
-			if (StringUtils.isNotBlank(s)) {
-				if(values[i].getClass().isArray()){
-					hql.append(" and (");
-					Object[] valuesArrayItem=(Object[]) values[i];
-					for(int j=0,size=valuesArrayItem.length;j<size;j++){
-						if(j==0){
-							hql.append(" t.").append(property[i]).append(" =? ");
-						}else{
-							hql.append(" or t.").append(property[i]).append(" =? ");
-						}
+			if(values[i].getClass().isArray()){
+				hql.append(" and (");
+				Object[] valuesArrayItem=(Object[]) values[i];
+				for(int j=0,size=valuesArrayItem.length;j<size;j++){
+					if(j==0){
+						hql.append(" t.").append(property[i]).append(" =? ");
+					}else{
+						hql.append(" or t.").append(property[i]).append(" =? ");
 					}
-					hql.append(" )");
-				}else{
-					hql.append(" and t.").append(property[i]).append(" =? ");
 				}
-			}else {
-				throw new RuntimeException("在" + entityClass.getName()+ "中不存在属性:" + cachePro[i]);
+				hql.append(" )");
+			}else{
+				hql.append(" and t.").append(property[i]).append(" =? ");
 			}
 		}
 		return hql;
