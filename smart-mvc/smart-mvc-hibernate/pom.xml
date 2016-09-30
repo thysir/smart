@@ -13,6 +13,13 @@
 	<name>${project.artifactId}</name>
 
 	<dependencies>
+	
+		<!-- beanutils操作 -->
+		<dependency>
+		    <groupId>commons-beanutils</groupId>
+		    <artifactId>commons-beanutils</artifactId>
+		</dependency>
+		
 		<!-- mvc包支持 -->
 		<dependency>
 			<groupId>com.smart</groupId>
