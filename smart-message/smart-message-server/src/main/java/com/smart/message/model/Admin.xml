@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.smart.message.dao.AdminDao">
+
+	<select id="get" parameterType="java.lang.Integer" resultType="Admin">
+     	SELECT * FROM SYS_ADMIN WHERE id = #{id}
+    </select>
+
+	<select id="findByAccount" parameterType="java.lang.String" resultType="Admin">
+     	SELECT * FROM SYS_ADMIN WHERE account = #{account}
+    </select>
+    
+    <insert id="save" parameterType="Admin" statementType="PREPARED" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO SYS_ADMIN(account,password,nikeName) VALUES (#{account},#{password},#{nikeName})
+	</insert>
+	
+    <update id="update" parameterType="Admin" statementType="PREPARED">
+		UPDATE SYS_ADMIN a SET a.`account` = #{account},a.`password` = #{password},a.`nikeName` = #{nikeName} WHERE a.`id` = #{id}
+	</update>
+	
+</mapper>

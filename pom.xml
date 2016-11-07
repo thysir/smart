@@ -23,6 +23,7 @@
 		<module>smart-static</module>
 		<!-- Smart结构代码生成工具 -->
 		<module>smart-tool</module>
+		<module>smart-message</module>
 	</modules>
 	
 	<properties>

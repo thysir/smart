@@ -1,0 +1,23 @@
+<list>
+  <Application>
+    <id>1</id>
+    <type>10</type>
+    <applicationAuthInfo class="gipcMasShotApplicationAuthInfo">
+      <host>192.168.21.200</host>
+      <apiId>vim</apiId>
+      <name>vim</name>
+      <pwd>Vim2016@09/16</pwd>
+      <dbName>mas</dbName>
+    </applicationAuthInfo>
+  </Application>
+  <Application>
+    <id>2</id>
+    <type>11</type>
+    <applicationAuthInfo class="ucpaasShotMessageApplicationAuthInfo">
+      <accountSid>62f2e56b4cfe4329592a663249d01345</accountSid>
+      <authToken>a815410876d7634cc90bd77e27bec6d3</authToken>
+      <appId>ad1bee2c925a4ee3bff0f8039ee45692</appId>
+      <templateId>31379</templateId>
+    </applicationAuthInfo>
+  </Application>
+</list>
