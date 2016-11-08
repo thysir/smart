@@ -81,26 +81,34 @@ public class ServiceImpl<DAO extends Dao, T extends Serializable, ID extends Ser
 	
 	public T deleteByProperty(String property, Object values){
 		T t=findByProperty(property, values);
-		delete(t);
+		if(t!=null){
+			delete(t);
+		}
 		return t;
 	}
 	
 	public List<T> deleteListByProperty(String property, Object values){
 		
 		List<T> ts=findListByProperty(property, values);
-		delete(ts);
+		if(ts!=null && ts.size()>0){
+			delete(ts);
+		}
 		return ts;
 	}
 	
 	public T deleteByPropertys(String[] property, Object... values){
 		T t=findByPropertys(property, values);
-		delete(t);
+		if(t!=null){
+			delete(t);
+		}
 		return t;
 	}
 	
 	public List<T> deleteListByPropertys(String[] property, Object... values){
 		List<T> ts=findListByPropertys(property, values);
-		delete(ts);
+		if(ts!=null && ts.size()>0){
+			delete(ts);
+		}
 		return ts;
 	}
 
