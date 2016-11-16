@@ -69,7 +69,7 @@
 	    <!--dataSource属性指定要用到的连接池--> 
 	    <property name="dataSource" ref="dataSource"/> 
 	    <!-- 配置model的alias,别名(即类名)-->
-	    <property name="typeAliasesPackage" value="com.smart.message.model" />
+	    <property name="typeAliasesPackage" value="com.smart.message.model;com.smart.message.vo" />
 	    <!-- 所有配置的aliasemapper文件 -->
 	    <property name="mapperLocations" value="classpath*:com/smart/message/model/*.xml" />
 	    <!--分页插件-->

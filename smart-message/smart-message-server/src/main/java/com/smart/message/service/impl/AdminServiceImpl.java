@@ -5,6 +5,7 @@ import javax.annotation.Resource;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.smart.message.dao.AdminDao;
 import com.smart.message.model.Admin;
@@ -32,6 +33,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminDao, Admin, Integer> impl
 		return dao.findByAccount(account);
 	}
 	
+	@Transactional
 	@Override
 	public void updatePwd(Integer id, String newPwd) {
 		

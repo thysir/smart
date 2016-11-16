@@ -18,13 +18,13 @@ public class Message implements Serializable {
 	private String receiver;
 
 	/** 将要收到消息的应用 */
-	private String applicationId;
+	private Integer applicationId;
 
 	public Message() {
 		super();
 	}
 
-	public Message(String content, String receiver, String applicationId) {
+	public Message(String content, String receiver, Integer applicationId) {
 		super();
 		this.content = content;
 		this.receiver = receiver;
@@ -47,11 +47,11 @@ public class Message implements Serializable {
 		this.receiver = receiver;
 	}
 
-	public String getApplicationId() {
+	public Integer getApplicationId() {
 		return applicationId;
 	}
 
-	public void setApplicationId(String applicationId) {
+	public void setApplicationId(Integer applicationId) {
 		this.applicationId = applicationId;
 	}
 

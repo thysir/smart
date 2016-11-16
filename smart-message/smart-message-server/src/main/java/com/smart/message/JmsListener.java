@@ -14,7 +14,8 @@ import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.smart.message.util.ApplicationUtils;
+import com.smart.message.service.ApplicationService;
+import com.smart.mvc.util.SpringUtils;
 import com.smart.util.StringUtils;
 
 /**
@@ -46,7 +47,7 @@ public class JmsListener implements MessageListener {
 			LOGGER.error("Jms illegal message!"); 
 		}
 
-		if(CollectionUtils.isEmpty(messageList)){
+		if(!CollectionUtils.isEmpty(messageList)){
 			for(com.smart.message.core.Message m:messageList){
 				send(m.getContent(), m.getReceiver(), m.getApplicationId());
 			}
@@ -60,14 +61,18 @@ public class JmsListener implements MessageListener {
 	 * @param receiver 消息的接受者
 	 * @param applicationId 发送消息的应用id
 	 */
-	private void send(String content, String receiver, String applicationId) {
+	private void send(String content, String receiver, Integer applicationId) {
 		
-		Application receiveApplication=ApplicationUtils.getById(applicationId);
+		ApplicationService applicationService=SpringUtils.getBean("applicationService");
+
+		ApplicationInfo receiveApplication=applicationService.getByApplicationId(applicationId);
 		if(StringUtils.isNotBlank(content) && StringUtils.isNotBlank(receiver) && receiveApplication!=null){
 			if(!CollectionUtils.isEmpty(messageApplicationList)){
 				for(MessageApplication app:messageApplicationList){
 					if(app.support(receiveApplication.getType())){
-						app.send(content, receiver, receiveApplication);
+						
+						boolean isSuccess=app.send(content, receiver, receiveApplication);
+						applicationService.saveAccessRecord(receiveApplication.getId(),isSuccess);
 					}
 				}
 			}

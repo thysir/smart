@@ -4,58 +4,68 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 
 import com.alibaba.fastjson.JSON;
-import com.smart.message.Application;
+import com.smart.message.ApplicationAuthInfo;
+import com.smart.message.ApplicationInfo;
 import com.smart.message.MessageApplication;
-import com.smart.message.application.auth.UcpaasShotMessageApplicationAuthInfo;
-import com.smart.message.enums.ApplicationType;
 import com.smart.message.invoker.HttpInvoker;
+import com.smart.message.service.ApplicationAuthService;
 import com.smart.message.util.EncryptUtil;
-import com.smart.mvc.exception.ApplicationException;
 import com.smart.util.DateUtils;
 import com.smart.util.StringUtils;
 
 @Component("ucpaasShotMessageApplication")
 public class UcpaasShotMessageApplication implements MessageApplication {
+	
+	@Resource private ApplicationAuthService applicationAuthService;
 
 	@Override
 	public boolean support(Integer applicationType) {
-		return ApplicationType.UCPAAS_SHOT_MESSAGE.getValue().equals(applicationType);
+		return new Integer(2).equals(applicationType);
 	}
 
 	@Override
-	public boolean send(String content,String receiver, Application receiveApplication) {
+	public boolean send(String content,String receiver, ApplicationInfo receiveApplication) {
 		boolean r = false;
-		if (StringUtils.isNotBlank(content) && receiveApplication != null && receiveApplication.getApplicationAuthInfo()!=null) {
+		if (StringUtils.isNotBlank(content) && receiveApplication != null) {
 			
-			if(!(receiveApplication.getApplicationAuthInfo() instanceof UcpaasShotMessageApplicationAuthInfo)){
-				throw new ApplicationException("应用授权信息类型错误,期望类型为:"+UcpaasShotMessageApplicationAuthInfo.class.getSimpleName()
-						+",实际类型为:"+receiveApplication.getApplicationAuthInfo().getClass().getSimpleName());
-			}
+			ApplicationAuthInfo applicationAuthInfo=applicationAuthService.getApplicationAuthInfo(receiveApplication.getId());
+			
+			//获取相应的授权信息
+			String accountSid=applicationAuthInfo.getValue("accountSid");
+			String authToken=applicationAuthInfo.getValue("authToken");
+			String appId=applicationAuthInfo.getValue("appId");
+			String templateId=applicationAuthInfo.getValue("templateId");
 			
 			String timeStamp=DateUtils.format(new Date(), "yyyyMMddHHmmss");
-			UcpaasShotMessageApplicationAuthInfo applicationAuthInfo=(UcpaasShotMessageApplicationAuthInfo) receiveApplication.getApplicationAuthInfo();
 			
 			//配置请求头信息
 			Map<String, Object> headres=new HashMap<String, Object>();
 			headres.put("Accept", "application/json");
 			headres.put("Content-Type", "application/json;charset=utf-8");
-			headres.put("Authorization", getAuthorization(applicationAuthInfo.getAccountSid(), timeStamp));
+			headres.put("Authorization", getAuthorization(accountSid, timeStamp));
 			
 			//组装请求体内容
-			TemplateSMS templateSMS=new TemplateSMS(applicationAuthInfo.getAppId(), content, applicationAuthInfo.getTemplateId(), receiver);
+			TemplateSMS templateSMS=new TemplateSMS(appId, content, templateId, receiver);
 			Map<String, Object> requestData=new HashMap<String, Object>();
 			requestData.put("templateSMS", templateSMS);
 			
 			//开始调用
 			HttpInvoker invoker=new HttpInvoker();
-			String api=getApi(applicationAuthInfo.getAccountSid(),applicationAuthInfo.getAuthToken(),timeStamp);
-			invoker.post(api, headres, JSON.toJSONString(requestData));
+			String api=getApi(accountSid,authToken,timeStamp);
 			
-			r=true;
+			try{
+				String invokerResult=invoker.post(api, headres, JSON.toJSONString(requestData));
+				UcpassResponse ucpassResponse=JSON.parseObject(invokerResult, UcpassResponse.class);
+				if(ucpassResponse!=null && ucpassResponse.isSuccess()){
+					r=true;
+				}
+			}catch (Exception e) {}
 		}
 		return r;
 	}
@@ -89,6 +99,10 @@ public class UcpaasShotMessageApplication implements MessageApplication {
 		return new String(Base64Utils.encode((accountSid + ":" + timeStamp).getBytes()));
 	}
 
+	/**
+	 * <b>Description:ucpass消息体</b><br>
+	 * @author jeason
+	 */
 	protected class TemplateSMS {
 
 		private String appId;
@@ -135,6 +149,43 @@ public class UcpaasShotMessageApplication implements MessageApplication {
 
 		public void setTo(String to) {
 			this.to = to;
+		}
+	}
+	
+	/***
+	 * <b>Description:ucpass响应体</b><br>
+	 * @author jeason
+	 */
+	protected static class UcpassResponse{
+		
+		private UcpassRes resp;
+
+		public UcpassRes getResp() {
+			return resp;
+		}
+
+		public void setResp(UcpassRes resp) {
+			this.resp = resp;
+		}
+		
+		public boolean isSuccess() {
+			if(resp!=null && "000000".equals(resp.getRespCode())){
+				return true;
+			}
+			return false;
+		}
+		
+		protected class UcpassRes{
+			
+			private String respCode;
+
+			public String getRespCode() {
+				return respCode;
+			}
+
+			public void setRespCode(String respCode) {
+				this.respCode = respCode;
+			}
 		}
 	}
 }

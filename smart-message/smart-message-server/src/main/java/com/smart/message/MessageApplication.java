@@ -24,5 +24,5 @@ public interface MessageApplication{
 	 * @param receiveApplication 收到消息的应用
 	 * @return
 	 */
-	boolean send(String content,String receiver, Application receiveApplication);
+	boolean send(String content,String receiver, ApplicationInfo receiveApplication);
 }
