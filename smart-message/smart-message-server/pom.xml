@@ -52,13 +52,6 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		
-		<!-- 短信lib包 -->
-		<dependency>
-			<groupId>com.jasson.im</groupId>
-			<artifactId>Imapi</artifactId>
-			<version>2.3</version>
-		</dependency>
-		
 		<!-- httpclient -->
 		<dependency>
 		    <groupId>org.apache.httpcomponents</groupId>
@@ -70,6 +63,13 @@
 		<dependency>
 		    <groupId>com.thoughtworks.xstream</groupId>
 		    <artifactId>xstream</artifactId>
+		</dependency>
+		
+		<!-- 腾讯信鸽 -->
+		<dependency> 
+			<groupId>com.tencent</groupId>
+		  	<artifactId>xinge</artifactId>
+		  	<version>1.1.8</version> 
 		</dependency>
 	</dependencies>
 	

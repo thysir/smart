@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.smart.message.dao.ApplicationCallLogDao">
+
+	<select id="get" parameterType="java.lang.Integer" resultType="ApplicationCallLog">
+     	SELECT * FROM BASE_APPLICATION_CALL_LOG WHERE id = #{id}
+    </select>
+    
+	<select id="findPagination" parameterType="Map" resultType="ApplicationCallLog">
+     	SELECT 
+     		*
+     	FROM 
+     		BASE_APPLICATION_CALL_LOG
+     	WHERE 1 = 1
+     	<if test="applicationId != null">
+			AND applicationId = #{applicationId}
+		</if>
+     	<if test="receiver != null and receiver != '' ">
+			AND receiver like CONCAT('%',#{receiver},'%')
+		</if>
+     	<if test="content != null and content != '' ">
+			AND content like CONCAT('%',#{content},'%')
+		</if>
+     	<if test="beginTime != null ">
+			AND createTime &gt;= #{beginTime}
+		</if>
+     	<if test="endTime != null ">
+			AND createTime &lt;= #{endTime}
+		</if>
+     	ORDER BY applicationId,createTime DESC
+    </select>
+
+    <insert id="save" parameterType="ApplicationCallLog" statementType="PREPARED" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO BASE_APPLICATION_CALL_LOG(applicationId,receiver,content,createTime,status,info) VALUES (#{applicationId},#{receiver},#{content},#{createTime},#{status},#{info})
+	</insert>
+	
+    <update id="update" parameterType="ApplicationCallLog" statementType="PREPARED">
+		UPDATE BASE_APPLICATION_CALL_LOG a SET a.applicationId = #{applicationId},a.receiver = #{receiver},a.content = #{content},a.createTime = #{createTime},a.status = #{status},a.info = #{info} WHERE a.id = #{id}
+	</update>
+	
+	<delete id="deleteById" parameterType="list" statementType="PREPARED">
+		DELETE FROM BASE_APPLICATION_CALL_LOG
+		WHERE 1 = 1
+		<if test="list != null">
+			AND id in <foreach collection="list" item="item" open="(" separator="," close=")">#{item}</foreach>
+		</if>
+	</delete>
+</mapper>

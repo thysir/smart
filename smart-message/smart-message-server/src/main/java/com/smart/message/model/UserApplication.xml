@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.smart.message.dao.UserApplicationDao">
+
+	<select id="get" parameterType="java.lang.Integer" resultType="UserApplication">
+     	SELECT * FROM RE_USER_APPLICATION WHERE id = #{id}
+    </select>
+    
+    <insert id="save" parameterType="UserApplication" statementType="PREPARED" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO RE_USER_APPLICATION(userId,applicationId) VALUES (#{userId},#{applicationId})
+	</insert>
+	
+	<delete id="deleteByUserId" parameterType="java.lang.Integer" statementType="PREPARED">
+		DELETE FROM RE_USER_APPLICATION WHERE 1 = 1 AND userId=#{userId}
+	</delete>
+	
+	<delete id="deleteByApplicationId" parameterType="java.lang.Integer" statementType="PREPARED">
+		DELETE FROM RE_USER_APPLICATION WHERE 1 = 1 AND applicationId=#{applicationId}
+	</delete>
+</mapper>

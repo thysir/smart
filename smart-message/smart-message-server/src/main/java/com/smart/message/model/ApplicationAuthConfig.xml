@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.smart.message.dao.ApplicationAuthConfigDao">
+
+	<select id="get" parameterType="java.lang.Integer" resultType="ApplicationAuthConfig">
+     	SELECT * FROM BASE_APPLICATION_AUTH_CONFIG WHERE id = #{id}
+    </select>
+
+	<select id="findPagination" parameterType="java.lang.Integer" resultType="ApplicationAuthConfig">
+     	SELECT 
+     		* 
+     	FROM BASE_APPLICATION_AUTH_CONFIG WHERE 1 = 1
+     	<if test="applicationTypeId != null">
+			AND applicationTypeId = #{applicationTypeId} 
+		</if>
+     	ORDER BY id DESC
+    </select>
+    
+	<select id="findByApplicationTypeIdAndAuthKey" parameterType="Map" resultType="ApplicationAuthConfig">   
+		SELECT 
+			* 
+     	FROM 
+     		BASE_APPLICATION_AUTH_CONFIG
+     	WHERE 1 = 1
+			AND applicationTypeId=#{applicationTypeId} AND authKey=#{authKey}
+	</select>
+
+	<select id="getListByApplicationTypeId" parameterType="java.lang.Integer" resultType="ApplicationAuthConfig">
+     	SELECT 
+     		* 
+     	FROM BASE_APPLICATION_AUTH_CONFIG WHERE AND applicationTypeId = #{applicationTypeId} 
+     	ORDER BY id DESC
+    </select>
+
+    <insert id="save" parameterType="ApplicationAuthConfig" statementType="PREPARED" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO 
+			BASE_APPLICATION_AUTH_CONFIG(applicationTypeId,authKey,description) 
+		VALUES
+			(#{applicationTypeId},#{authKey},#{description})
+	</insert>
+	
+    <update id="update" parameterType="ApplicationAuthConfig" statementType="PREPARED">
+		UPDATE 
+			BASE_APPLICATION_AUTH_CONFIG a 
+		SET 
+			a.applicationTypeId = #{applicationTypeId},a.authKey = #{authKey},a.description = #{description}
+		WHERE
+			a.id = #{id}
+	</update>
+	
+	<delete id="deletByApplicationTypeIds" parameterType="list" statementType="PREPARED">
+		DELETE FROM BASE_APPLICATION_AUTH_CONFIG
+		WHERE 1 = 1
+		<if test="list != null">
+			AND applicationTypeId in <foreach collection="list" item="item" open="(" separator="," close=")">#{item}</foreach>
+		</if>
+	</delete>
+</mapper>

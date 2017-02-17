@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.smart.message.dao.ApplicationDao">
+
+	<select id="get" parameterType="java.lang.Integer" resultType="Application">
+     	SELECT * FROM BASE_APPLICATION WHERE id = #{id}
+    </select>
+
+	<select id="findPagination" parameterType="Map" resultType="ApplicationListItem">
+     	SELECT 
+     		app.* , type.name as applicationTypeName
+     	FROM 
+     		BASE_APPLICATION app left join BASE_APPLICATION_TYPE type on type.id=app.applicationTypeId
+     	WHERE 1 = 1
+     	<if test="name != null and name != '' ">
+			AND app.name like CONCAT('%',#{name},'%')
+		</if>
+     	ORDER BY app.sort DESC, app.id DESC
+    </select>
+
+    <insert id="save" parameterType="Application" statementType="PREPARED" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO 
+			BASE_APPLICATION(name,description,sort,applicationTypeId,count,successCount,errorCount) 
+		VALUES
+			(#{name},#{description},#{sort},#{applicationTypeId},#{count},#{successCount},#{errorCount})
+	</insert>
+	
+    <update id="update" parameterType="Application" statementType="PREPARED">
+		UPDATE 
+			BASE_APPLICATION a 
+		SET 
+			a.name = #{name},a.description = #{description},a.sort = #{sort},a.applicationTypeId = #{applicationTypeId},a.count = #{count},
+			a.successCount = #{successCount},a.errorCount = #{errorCount}
+		WHERE
+			a.id = #{id}
+	</update>
+	
+    <update id="saveAccessRecord" parameterType="Map" statementType="PREPARED">
+		UPDATE 
+			BASE_APPLICATION a 
+		SET 
+			a.count = a.count+1
+			<if test="isSuccess">
+				,a.successCount = a.successCount+1
+			</if>
+			<if test="!isSuccess">
+				,a.errorCount = a.errorCount+1
+			</if>
+		WHERE
+			a.id = #{id}
+	</update>
+	
+	<delete id="deleteById" parameterType="list" statementType="PREPARED">
+		DELETE FROM BASE_APPLICATION
+		WHERE 1 = 1
+		<if test="list != null">
+			AND `id` in <foreach collection="list" item="item" open="(" separator="," close=")">#{item}</foreach>
+		</if>
+	</delete>
+</mapper>

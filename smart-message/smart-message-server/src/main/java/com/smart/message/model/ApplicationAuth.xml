@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.smart.message.dao.ApplicationAuthDao">
+
+	<select id="get" parameterType="java.lang.Integer" resultType="ApplicationAuth">
+     	SELECT * FROM BASE_APPLICATION_AUTH WHERE id = #{id}
+    </select>
+
+	<select id="getListByApplicationId" parameterType="java.lang.Integer" resultType="ApplicationAuth">
+     	SELECT 
+     		* 
+     	FROM 
+     		BASE_APPLICATION_AUTH 
+     	WHERE 1=1
+     		 AND applicationId = #{applicationId} 
+     	ORDER BY id DESC
+    </select>
+
+	<select id="findAuthInfoByApplicationIdAndApplicationTypeId" parameterType="Map" resultType="ApplicationAuthItem">
+		
+		<if test="applicationId != null">
+			SELECT
+				config.authKey,auth.authValue,config.description
+			FROM
+				BASE_APPLICATION_AUTH auth right join (
+					SELECT 
+						config.* 
+					FROM BASE_APPLICATION_AUTH_CONFIG config JOIN BASE_APPLICATION_TYPE type ON config.applicationTypeId=type.id
+					JOIN BASE_APPLICATION application ON application.applicationTypeId=type.id
+					WHERE 
+						application.id=#{applicationId}
+				) config on config.authKey=auth.authKey
+		</if>
+		<if test="applicationId == null">
+			SELECT
+				config.authKey,'' as authValue,config.description
+			FROM
+				BASE_APPLICATION_AUTH_CONFIG config
+			WHERE 1=1
+		</if>
+     	
+     	<if test="applicationTypeId != null">
+	     	AND config.applicationTypeId = #{applicationTypeId} 
+     	</if>
+     	ORDER BY config.id DESC
+    </select>
+
+    <insert id="save" parameterType="ApplicationAuth" statementType="PREPARED" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO 
+			BASE_APPLICATION_AUTH(applicationId,authKey,authValue) 
+		VALUES
+			(#{applicationId},#{authKey},#{authValue})
+	</insert>
+	
+    <update id="update" parameterType="ApplicationAuth" statementType="PREPARED">
+		UPDATE 
+			BASE_APPLICATION_AUTH a 
+		SET 
+			a.applicationId = #{applicationId},a.authKey = #{authKey},a.authValue = #{authValue}
+		WHERE
+			a.id = #{id}
+	</update>
+	
+	<delete id="deleteByApplicationId" parameterType="Map" statementType="PREPARED">
+		DELETE FROM BASE_APPLICATION_AUTH WHERE applicationId=#{applicationId}
+	</delete>
+	
+	<delete id="deleteByApplicationIds" parameterType="list" statementType="PREPARED">
+		DELETE FROM BASE_APPLICATION_AUTH
+		WHERE 1 = 1
+		<if test="list != null">
+			AND `applicationId` in <foreach collection="list" item="item" open="(" separator="," close=")">#{item}</foreach>
+		</if>
+	</delete>
+</mapper>
