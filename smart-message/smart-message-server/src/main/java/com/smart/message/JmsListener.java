@@ -1,6 +1,7 @@
 package com.smart.message;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.jms.JMSException;
@@ -14,6 +15,8 @@ import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.smart.message.model.ApplicationCallLog;
+import com.smart.message.service.ApplicationCallLogService;
 import com.smart.message.service.ApplicationService;
 import com.smart.mvc.util.SpringUtils;
 import com.smart.util.StringUtils;
@@ -64,15 +67,33 @@ public class JmsListener implements MessageListener {
 	private void send(String content, String receiver, Integer applicationId) {
 		
 		ApplicationService applicationService=SpringUtils.getBean("applicationService");
+		ApplicationCallLogService applicationCallLogService=SpringUtils.getBean("applicationCallLogService");
 
 		ApplicationInfo receiveApplication=applicationService.getByApplicationId(applicationId);
-		if(StringUtils.isNotBlank(content) && StringUtils.isNotBlank(receiver) && receiveApplication!=null){
+		if(StringUtils.isNotBlank(content) && receiveApplication!=null){
 			if(!CollectionUtils.isEmpty(messageApplicationList)){
 				for(MessageApplication app:messageApplicationList){
 					if(app.support(receiveApplication.getType())){
 						
-						boolean isSuccess=app.send(content, receiver, receiveApplication);
-						applicationService.saveAccessRecord(receiveApplication.getId(),isSuccess);
+						Exception exception=null;
+						try{
+							app.send(content, receiver, receiveApplication);
+						}catch (Exception e) {
+							exception=e;
+						}finally{
+							//更新接口调用信息
+							applicationService.saveAccessRecord(receiveApplication.getId(),exception==null);
+							
+							//更新接口调用日志
+							ApplicationCallLog log=new ApplicationCallLog();
+							log.setApplicationId(applicationId);
+							log.setContent(content);
+							log.setCreateTime(new Date());
+							log.setReceiver(receiver);
+							log.setStatus(exception==null?ApplicationCallLog.STATUS_SUCCESS:ApplicationCallLog.STATUS_FAIL);
+							log.setInfo(exception==null?null:exception.getMessage());
+							applicationCallLogService.save(log);
+						}
 					}
 				}
 			}

@@ -7,8 +7,12 @@ import com.smart.mvc.model.PersistentObject;
 public class ApplicationCallLog extends PersistentObject {
 
 	private static final long serialVersionUID = 4408541847865337891L;
+	
+	public static final int STATUS_SUCCESS = 0;			//调用成功状态
+	public static final int STATUS_FAIL = 1;			//调用失败状态
+	
 	/** 消息应用id */
-	private String applicationId;
+	private Integer applicationId;
 	/** 接收者 */
 	private String receiver;
 	/** 消息体 */
@@ -20,11 +24,11 @@ public class ApplicationCallLog extends PersistentObject {
 	/** 日志信息 */
 	private String info;
 
-	public String getApplicationId() {
+	public Integer getApplicationId() {
 		return applicationId;
 	}
 
-	public void setApplicationId(String applicationId) {
+	public void setApplicationId(Integer applicationId) {
 		this.applicationId = applicationId;
 	}
 

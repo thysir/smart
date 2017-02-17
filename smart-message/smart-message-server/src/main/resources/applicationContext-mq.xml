@@ -45,6 +45,7 @@
             <list>
                 <ref bean="gipcMasShotMessageApplication"/>
                 <ref bean="ucpaasShotMessageApplication"/>
+                <ref bean="xgPushMessageApplication"/>
             </list>
         </property>
 	</bean>

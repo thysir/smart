@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSON;
 import com.smart.message.ApplicationAuthInfo;
 import com.smart.message.ApplicationInfo;
 import com.smart.message.MessageApplication;
+import com.smart.message.exception.InvokerErrorException;
 import com.smart.message.invoker.HttpInvoker;
 import com.smart.message.service.ApplicationAuthService;
 import com.smart.message.util.EncryptUtil;
@@ -30,44 +31,42 @@ public class UcpaasShotMessageApplication implements MessageApplication {
 	}
 
 	@Override
-	public boolean send(String content,String receiver, ApplicationInfo receiveApplication) {
-		boolean r = false;
-		if (StringUtils.isNotBlank(content) && receiveApplication != null) {
-			
-			ApplicationAuthInfo applicationAuthInfo=applicationAuthService.getApplicationAuthInfo(receiveApplication.getId());
-			
-			//获取相应的授权信息
-			String accountSid=applicationAuthInfo.getValue("accountSid");
-			String authToken=applicationAuthInfo.getValue("authToken");
-			String appId=applicationAuthInfo.getValue("appId");
-			String templateId=applicationAuthInfo.getValue("templateId");
-			
-			String timeStamp=DateUtils.format(new Date(), "yyyyMMddHHmmss");
-			
-			//配置请求头信息
-			Map<String, Object> headres=new HashMap<String, Object>();
-			headres.put("Accept", "application/json");
-			headres.put("Content-Type", "application/json;charset=utf-8");
-			headres.put("Authorization", getAuthorization(accountSid, timeStamp));
-			
-			//组装请求体内容
-			TemplateSMS templateSMS=new TemplateSMS(appId, content, templateId, receiver);
-			Map<String, Object> requestData=new HashMap<String, Object>();
-			requestData.put("templateSMS", templateSMS);
-			
-			//开始调用
-			HttpInvoker invoker=new HttpInvoker();
-			String api=getApi(accountSid,authToken,timeStamp);
-			
-			try{
-				String invokerResult=invoker.post(api, headres, JSON.toJSONString(requestData));
-				UcpassResponse ucpassResponse=JSON.parseObject(invokerResult, UcpassResponse.class);
-				if(ucpassResponse!=null && ucpassResponse.isSuccess()){
-					r=true;
-				}
-			}catch (Exception e) {}
+	public void send(String content,String receiver, ApplicationInfo receiveApplication) throws InvokerErrorException {
+		
+		if(StringUtils.isBlank(content) || receiveApplication==null){
+			throw new InvokerErrorException("参数验证失败：content="+content+";receiveApplication="+receiveApplication);
 		}
-		return r;
+		
+		ApplicationAuthInfo applicationAuthInfo=applicationAuthService.getApplicationAuthInfo(receiveApplication.getId());
+		
+		//获取相应的授权信息
+		String accountSid=applicationAuthInfo.getValue("accountSid");
+		String authToken=applicationAuthInfo.getValue("authToken");
+		String appId=applicationAuthInfo.getValue("appId");
+		String templateId=applicationAuthInfo.getValue("templateId");
+		
+		String timeStamp=DateUtils.format(new Date(), "yyyyMMddHHmmss");
+		
+		//配置请求头信息
+		Map<String, Object> headres=new HashMap<String, Object>();
+		headres.put("Accept", "application/json");
+		headres.put("Content-Type", "application/json;charset=utf-8");
+		headres.put("Authorization", getAuthorization(accountSid, timeStamp));
+		
+		//组装请求体内容
+		TemplateSMS templateSMS=new TemplateSMS(appId, content, templateId, receiver);
+		Map<String, Object> requestData=new HashMap<String, Object>();
+		requestData.put("templateSMS", templateSMS);
+		
+		//开始调用
+		HttpInvoker invoker=new HttpInvoker();
+		String api=getApi(accountSid,authToken,timeStamp);
+		
+		String invokerResult=invoker.post(api, headres, JSON.toJSONString(requestData));
+		UcpassResponse ucpassResponse=JSON.parseObject(invokerResult, UcpassResponse.class);
+		if(ucpassResponse==null || !ucpassResponse.isSuccess()){
+			throw new InvokerErrorException("接口调用失败："+invokerResult);
+		}
 	}
 
 	/**

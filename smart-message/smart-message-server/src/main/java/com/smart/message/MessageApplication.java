@@ -1,5 +1,6 @@
 package com.smart.message;
 
+import com.smart.message.exception.InvokerErrorException;
 
 /**
  * <b>Description:发送消息应用接口</b><br>
@@ -16,13 +17,12 @@ public interface MessageApplication{
 	boolean support(Integer applicationType);
 	
 	/**
-	 * Description:发送消息
-	 * @author 唐海洋
-	 * @Version 1.0 2016-9-22上午11:38:02 
-	 * @param content 消息内容
+	 * Description:
+	 * @author jeason
+ 	 * @param content 消息内容
 	 * @param receiver 接收消息的用户
 	 * @param receiveApplication 收到消息的应用
-	 * @return
+	 * @throws InvokerErrorException 调用失败时抛出此异常
 	 */
-	boolean send(String content,String receiver, ApplicationInfo receiveApplication);
+	void send(String content,String receiver, ApplicationInfo receiveApplication) throws InvokerErrorException;
 }

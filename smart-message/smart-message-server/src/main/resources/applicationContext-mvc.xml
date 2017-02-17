@@ -19,7 +19,16 @@
 			<bean class="com.smart.mvc.resovler.MethodArgumentResovler"/> 
 		</mvc:argument-resolvers>
         <mvc:message-converters>
-            <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter" />
+            <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+            	<property name="features">
+		            <list>
+		               <!-- Date的日期转换器 -->
+		               <value>WriteDateUseDateFormat</value>
+		               <!-- 将属性值为空的属性也一并输出 -->
+		               <value>WriteMapNullValue</value>
+		            </list>
+		         </property>
+            </bean>
         </mvc:message-converters>
     </mvc:annotation-driven>
     
