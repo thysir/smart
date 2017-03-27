@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.util.CollectionUtils;
+
 import com.smart.mvc.dao.mybatis.Dao;
+import com.smart.mvc.dao.mybatis.model.QueryPropertys;
 import com.smart.mvc.model.Pagination;
 import com.smart.mvc.model.PersistentObject;
 import com.smart.mvc.service.mybatis.Service;
@@ -170,5 +173,29 @@ public abstract class ServiceImpl<DAO extends Dao, T extends PersistentObject, I
 	public Pagination<T> findByAllPagination(Pagination<T> p){
 		dao.findByAll(p);
 		return p;
+	}
+	
+	/**
+	 * 通过属性进行查找
+	 * @param queryPropertys
+	 * @return
+	 */
+	public T findByPropertys(QueryPropertys queryPropertys){
+		
+		List<T> list = dao.findListByPropertys(queryPropertys);
+		if(!CollectionUtils.isEmpty(list)){
+			return list.get(0);
+		}else{
+			return null;
+		}
+	}
+	
+	/**
+	 * 通过属性进行查找
+	 * @param queryPropertys
+	 * @return
+	 */
+	public List<T> findListByPropertys(QueryPropertys queryPropertys){
+		return dao.findListByPropertys(queryPropertys);
 	}
 }

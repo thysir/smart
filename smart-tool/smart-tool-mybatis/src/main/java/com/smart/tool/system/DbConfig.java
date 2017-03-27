@@ -28,7 +28,7 @@ public class DbConfig {
 	public DbConfig() {
 		Properties props = new Properties();
 		try {
-			InputStream in = new FileInputStream(new File("config2.properties"));
+			InputStream in = new FileInputStream(new File("config.properties"));
 			props.load(in);
 
 			generateType = props.getProperty("default.generateType");

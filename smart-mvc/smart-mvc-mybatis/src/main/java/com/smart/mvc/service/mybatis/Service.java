@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
+import com.smart.mvc.dao.mybatis.model.QueryPropertys;
 import com.smart.mvc.model.Pagination;
 import com.smart.mvc.model.PersistentObject;
 
@@ -123,4 +124,18 @@ public interface Service<DAO, T extends PersistentObject, ID extends Serializabl
 	 * @return
 	 */
 	public Pagination<T> findByAllPagination(Pagination<T> p);
+	
+	/**
+	 * 通过属性进行查找
+	 * @param queryPropertys
+	 * @return
+	 */
+	public T findByPropertys(QueryPropertys queryPropertys);
+	
+	/**
+	 * 通过属性进行查找
+	 * @param queryPropertys
+	 * @return
+	 */
+	public List<T> findListByPropertys(QueryPropertys queryPropertys);
 }

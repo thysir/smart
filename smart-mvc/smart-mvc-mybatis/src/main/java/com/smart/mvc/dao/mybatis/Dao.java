@@ -3,6 +3,7 @@ package com.smart.mvc.dao.mybatis;
 import java.util.Collection;
 import java.util.List;
 
+import com.smart.mvc.dao.mybatis.model.QueryPropertys;
 import com.smart.mvc.model.Pagination;
 
 /**
@@ -60,4 +61,11 @@ public interface Dao<T, ID> {
 	 * @return
 	 */
 	public List<T> findByAll(Pagination<T> p);
+	
+	/**
+	 * 通过属性进行查找
+	 * @param queryPropertys
+	 * @return
+	 */
+	public List<T> findListByPropertys(QueryPropertys queryPropertys);
 }
