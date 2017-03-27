@@ -48,10 +48,10 @@ public class ApplicationTypeServiceImpl extends ServiceImpl<ApplicationTypeDao, 
 	
 	@Transactional
 	@Override
-	public void deleteById(List<Integer> idList) {
+	public int deleteById(List<Integer> idList) {
 		
 		applicationAuthConfigService.deletByApplicationTypeIds(idList);
 		
-		super.deleteById(idList);
+		return super.deleteById(idList);
 	}
 }
