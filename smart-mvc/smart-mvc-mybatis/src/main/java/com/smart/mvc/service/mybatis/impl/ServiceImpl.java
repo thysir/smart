@@ -8,9 +8,9 @@ import java.util.List;
 import org.springframework.util.CollectionUtils;
 
 import com.smart.mvc.dao.mybatis.Dao;
-import com.smart.mvc.dao.mybatis.model.QueryPropertys;
 import com.smart.mvc.model.Pagination;
 import com.smart.mvc.model.PersistentObject;
+import com.smart.mvc.model.mybatis.QueryPropertys;
 import com.smart.mvc.service.mybatis.Service;
 
 /**

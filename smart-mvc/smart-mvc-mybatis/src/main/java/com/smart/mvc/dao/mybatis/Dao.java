@@ -3,8 +3,8 @@ package com.smart.mvc.dao.mybatis;
 import java.util.Collection;
 import java.util.List;
 
-import com.smart.mvc.dao.mybatis.model.QueryPropertys;
 import com.smart.mvc.model.Pagination;
+import com.smart.mvc.model.mybatis.QueryPropertys;
 
 /**
  * Dao接口
