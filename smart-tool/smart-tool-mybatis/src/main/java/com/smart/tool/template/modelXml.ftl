@@ -8,12 +8,12 @@
 	<insert id="save" parameterType="${model}" statementType="PREPARED" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO ${tableName}(
 			<#list fieldList as field>
-			`${field.fieldName}`
+			${field.fieldName}<#if field_has_next>,</#if>
 			</#list>
 		) 
 		VALUES (
 			<#list fieldList as field>
-			&{${field.fieldName}}
+			&{${field.fieldName}}<#if field_has_next>,</#if>
 			</#list>
 		)
 	</insert>
@@ -21,16 +21,16 @@
     <update id="update" parameterType="${model}" statementType="PREPARED">
 		UPDATE ${tableName} SET
 			<#list fieldList as field>
-			  `${field.fieldName}` = &{${field.fieldName}}
+			  ${field.fieldName} = &{${field.fieldName}}<#if field_has_next>,</#if>
 			</#list>
-		WHERE `id` = &{id}
+		WHERE id = &{id}
 	</update>
 	
 	<delete id="deleteById" parameterType="list" statementType="PREPARED">
 		DELETE FROM ${tableName}
 		WHERE 1 = 1
 		<if test="list != null">
-			AND `id` in <foreach collection="list" item="item" open="(" separator="," close=")">&{item}</foreach>
+			AND id in <foreach collection="list" item="item" open="(" separator="," close=")">&{item}</foreach>
 		</if>
 	</delete>
 	
@@ -38,7 +38,7 @@
 		SELECT * FROM ${tableName}
 	</select>
 	
-	<select id="findByPropertys" parameterType="com.smart.mvc.dao.mybatis.model.QueryPropertys" resultType="${model}">   
+	<select id="findByPropertys" parameterType="com.smart.mvc.model.mybatis.QueryPropertys" resultType="${model}">   
 		SELECT * FROM ${tableName} WHERE
      	<if test="propertys != null">
      		<foreach collection="propertys" item="property" separator="AND">
