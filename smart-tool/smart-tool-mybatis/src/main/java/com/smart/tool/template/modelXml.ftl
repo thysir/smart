@@ -38,7 +38,7 @@
 		SELECT * FROM ${tableName}
 	</select>
 	
-	<select id="findByPropertys" parameterType="com.smart.mvc.model.mybatis.QueryPropertys" resultType="${model}">   
+	<select id="findListByPropertys" parameterType="com.smart.mvc.model.mybatis.QueryPropertys" resultType="${model}">   
 		SELECT * FROM ${tableName} WHERE
      	<if test="propertys != null">
      		<foreach collection="propertys" item="property" separator="AND">
