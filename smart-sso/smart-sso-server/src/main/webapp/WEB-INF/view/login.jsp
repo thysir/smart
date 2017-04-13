@@ -88,7 +88,7 @@
 														<span class="block input-icon input-icon-right help-validate">
 														<%--此代码仅用于开发环境begin，默认了登录用户--%>
 															<input id="_account" name="account" type="text" class="form-control form-data" placeholder="登录名"
-																required="true" minlength = '4'/>
+																required="true" minlength = '3'/>
 															<i class="ace-icon fa fa-user"></i>
 														</span>
 													</label>
