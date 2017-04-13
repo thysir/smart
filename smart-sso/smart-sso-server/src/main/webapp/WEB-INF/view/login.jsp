@@ -1,4 +1,5 @@
 <%@ page language="java" pageEncoding="utf-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%  
     response.setHeader("Pragma", "No-cache");
     response.setHeader("Cache-Control", "no-cache");
@@ -80,6 +81,7 @@
 											<form id="_loginForm" action="${_path}/login" method="post"
 												validate="true" vmessage="false">
 												<input type="hidden" name="backUrl" value="${backUrl}" />
+												<input type="hidden" name="registerUrl" value="${registerUrl}" />
 												<input type="hidden" name="appCode" value="${appCode}" />
 												<fieldset>
 													<label class="block clearfix form-group">
@@ -117,7 +119,6 @@
 															<input id="_rememberMe" type="checkbox" class="ace" checked=""/>
 															<span class="lbl"> 记住我</span>
 														</label>
-
 														<button id="_loginButton" type="button" class="width-35 pull-right btn btn-sm btn-primary">
 															<i class="ace-icon fa fa-key"></i>
 															<span class="bigger-110">登录</span>
@@ -130,8 +131,18 @@
 
 											
 										</div><!-- /.widget-main -->
-
-										
+										<c:if test="${!empty registerUrl}">
+											<div class="toolbar clearfix">
+												<div>
+												</div>
+												<div>
+													<a href="${registerUrl }" data-target="#signup-box" class="user-signup-link">
+														没有账号，立即注册
+														<i class="ace-icon fa fa-arrow-right"></i>
+													</a>
+												</div>
+											</div>
+										</c:if>
 									</div><!-- /.widget-body -->
 								</div><!-- /.login-box -->
 

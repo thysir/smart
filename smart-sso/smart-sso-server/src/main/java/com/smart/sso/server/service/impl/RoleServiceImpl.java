@@ -69,4 +69,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, Role, Integer> impleme
 	public int deleteByAppIds(List<Integer> idList) {
 		return dao.deleteByAppIds(idList);
 	}
+
+	@Override
+	public List<Role> findByCodes(List<String> roleCodeList) {
+		return dao.findByCodes(roleCodeList);
+	}
 }

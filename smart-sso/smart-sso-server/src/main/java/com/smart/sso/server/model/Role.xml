@@ -59,13 +59,15 @@
      	ORDER BY a.sort DESC 
 	</select>
 	
-	<delete id="deleteById" parameterType="list" statementType="PREPARED">
-		DELETE FROM SYS_ROLE
-		WHERE 1 = 1
-		<if test="list != null">
-			AND `id` in <foreach collection="list" item="item" open="(" separator="," close=")">#{item}</foreach>
+	<select id="findByCodes" parameterType="map" resultType="Role">   
+		SELECT * 
+     	FROM SYS_ROLE a
+     	WHERE 1 = 1
+     	<if test="roleCodeList != null">
+			AND a.description in <foreach collection="roleCodeList" item="item" open="(" separator="," close=")">#{item}</foreach>
 		</if>
-	</delete>
+     	ORDER BY a.sort DESC 
+	</select>
 	
 	<delete id="deleteByAppIds" parameterType="map" statementType="PREPARED">
 		DELETE FROM SYS_ROLE

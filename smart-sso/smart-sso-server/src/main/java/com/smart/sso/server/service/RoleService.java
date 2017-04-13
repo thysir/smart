@@ -41,6 +41,14 @@ public interface RoleService extends Service<RoleDao, Role, Integer> {
 	public List<Role> findByAppId(Boolean isEnable, Integer appId);
 	
 	/**
+	 * 查询应用可用角色
+	 * @param isEnable 是否启用
+	 * @param roleCodeList 角色代码列表
+	 * @return
+	 */
+	public List<Role> findByCodes(List<String> roleCodeList);
+	
+	/**
 	 * 删除某个应用下的所有角色
 	 * @param idList 应用ID集合
 	 * @return

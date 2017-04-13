@@ -47,11 +47,13 @@ public class LoginController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String login(@ValidateParam(name = "返回链接", validators = { Validator.NOT_BLANK }) String backUrl,
+			@ValidateParam(name = "注册链接") String registerUrl,
 			@ValidateParam(name = "应用编码", validators = { Validator.NOT_BLANK }) String appCode,
 			HttpServletRequest request) {
 		String token = CookieUtils.getCookie(request, "token");
 		if (token == null) {
 			request.setAttribute("backUrl", backUrl);
+			request.setAttribute("registerUrl", registerUrl);
 			request.setAttribute("appCode", appCode);
 			return Loginable.LOGIN_PATH;
 		}
@@ -70,6 +72,7 @@ public class LoginController {
 			}
 			else {
 				request.setAttribute("backUrl", backUrl);
+				request.setAttribute("registerUrl", registerUrl);
 				request.setAttribute("appCode", appCode);
 				return Loginable.LOGIN_PATH;
 			}
@@ -78,6 +81,7 @@ public class LoginController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String login(@ValidateParam(name = "返回链接", validators = { Validator.NOT_BLANK }) String backUrl,
+			@ValidateParam(name = "注册链接") String registerUrl,
 			@ValidateParam(name = "应用编码", validators = { Validator.NOT_BLANK }) String appCode,
 			@ValidateParam(name = "登录名", validators = { Validator.NOT_BLANK }) String account,
 			@ValidateParam(name = "密码", validators = { Validator.NOT_BLANK }) String password,
@@ -87,6 +91,7 @@ public class LoginController {
 		if (!result.isSuccess()) {
 			request.setAttribute(Loginable.VALIDATE_MESSAGE_NAME, result.getMessage());
 			request.setAttribute("backUrl", backUrl);
+			request.setAttribute("registerUrl", registerUrl);
 			request.setAttribute("appCode", appCode);
 			return Loginable.LOGIN_PATH;
 		}

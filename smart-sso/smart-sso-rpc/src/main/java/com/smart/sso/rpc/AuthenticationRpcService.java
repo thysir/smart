@@ -85,4 +85,14 @@ public interface AuthenticationRpcService {
 	public boolean regiestAndAuthorize(String token, String appCode, String account,
 			String password, String[] roleCodes);
 	
+	/**
+	 * Description:注册账号
+	 * @author jeason
+	 * @param account 账号
+	 * @param password 密码
+	 * @param roleCodes 角色列表
+	 * @return
+	 */
+	public boolean createUser(String account,String password,String[] roleCodes);
+	
 }

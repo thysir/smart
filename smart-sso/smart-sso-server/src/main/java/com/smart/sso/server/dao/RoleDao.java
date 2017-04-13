@@ -22,5 +22,7 @@ public interface RoleDao extends Dao<Role, Integer> {
 	public List<Role> findPaginationByName(@Param("name") String name, @Param("isEnable") Boolean isEnable,
 			@Param("appId") Integer appId, Pagination<Role> p);
 
+	public List<Role> findByCodes(@Param("roleCodeList") List<String> roleCodeList);
+	
 	public int deleteByAppIds(@Param("idList") List<Integer> idList);
 }

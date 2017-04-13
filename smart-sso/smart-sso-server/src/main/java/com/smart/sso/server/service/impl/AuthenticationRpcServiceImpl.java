@@ -1,8 +1,11 @@
 package com.smart.sso.server.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -26,7 +29,6 @@ import com.smart.sso.server.service.PermissionService;
 import com.smart.sso.server.service.RoleService;
 import com.smart.sso.server.service.UserAppService;
 import com.smart.sso.server.service.UserRoleService;
-import com.smart.sso.server.service.UserAppService;
 import com.smart.sso.server.service.UserService;
 import com.smart.util.StringUtils;
 import com.smart.util.ValidateUtils;
@@ -168,6 +170,58 @@ public class AuthenticationRpcServiceImpl implements AuthenticationRpcService {
 							}
 						}
 					}
+				}
+			}
+		}
+		return true;
+	}
+	
+	@Transactional
+	@Override
+	public boolean createUser(String account,String password,String[] roleCodes) {
+		
+		if(StringUtils.isBlank(account) || StringUtils.isBlank(password)){
+			//参数验证失败
+			return false;
+		}
+
+		User user=userService.findByAccount(account);
+		if(user!=null){
+			//账号已经存在,不能重复注册
+			return false;
+		}
+		
+		//数据验证通过，开始执行保存
+		user=new User();
+		user.setAccount(account);
+		user.setCreateTime(new Date());
+		user.setIsEnable(true);
+		user.setLoginCount(0);
+		user.setPassword(PasswordProvider.encrypt(password));
+		userService.save(user);
+		
+		if(roleCodes!=null && roleCodes.length>0){
+
+			Set<Integer> appIdSet=new HashSet<Integer>(2);
+			List<Role> appRoleList=roleService.findByCodes(Arrays.asList(roleCodes));
+			if(!CollectionUtils.isEmpty(appRoleList)){
+				for(Role role:appRoleList){
+					UserRole userRole=new UserRole();
+					userRole.setAppId(role.getAppId());
+					userRole.setRoleId(role.getId());
+					userRole.setUserId(user.getId());
+					userRoleService.save(userRole);
+					
+					appIdSet.add(role.getAppId());
+				}
+			}
+			
+			if(!CollectionUtils.isEmpty(appIdSet)){
+				for(Integer appId:appIdSet){
+					UserApp userApp=new UserApp();
+					userApp.setAppId(appId);
+					userApp.setUserId(user.getId());
+					userAppService.save(userApp);
 				}
 			}
 		}
