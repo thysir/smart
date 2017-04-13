@@ -1,6 +1,6 @@
 package com.smart.mvc.model;
 
-public final class ResultCode {
+public class ResultCode {
 	
 	public final static String SUCCESS = "0000";// 成功
 
