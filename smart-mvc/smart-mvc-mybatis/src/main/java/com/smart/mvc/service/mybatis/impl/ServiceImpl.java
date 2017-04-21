@@ -2,6 +2,7 @@ package com.smart.mvc.service.mybatis.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -100,7 +101,7 @@ public abstract class ServiceImpl<DAO extends Dao, T extends PersistentObject, I
 	 *            t
 	 */
 	public int delete(T t) {
-		return ((Dao) dao).deleteById(t.getId());
+		return deleteById((ID) t.getId());
 	}
 
 	/**
@@ -150,7 +151,7 @@ public abstract class ServiceImpl<DAO extends Dao, T extends PersistentObject, I
 	 * @return T
 	 */
 	public int deleteById(ID id) {
-		return dao.deleteById(id);
+		return deleteById(Arrays.asList(id));
 	}
 
 	/**

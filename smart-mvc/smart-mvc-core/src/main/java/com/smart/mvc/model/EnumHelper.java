@@ -17,6 +17,15 @@ public class EnumHelper {
 		}
 		return null;
 	}
+	
+	public static <E extends EnumItemable<?>> E get(Class<E> enumType, Object value) {
+		for (E e : enumType.getEnumConstants()) {
+			if (e.getValue().equals(value)) {
+				return e;
+			}
+		}
+		return null;
+	}
 
 	public static <E extends EnumItemable<?>> String getValue(Class<E> enumType, String label) {
 		for (E e : enumType.getEnumConstants()) {

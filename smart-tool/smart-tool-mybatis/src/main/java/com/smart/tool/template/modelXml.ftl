@@ -28,10 +28,17 @@
 	
 	<delete id="deleteById" parameterType="list" statementType="PREPARED">
 		DELETE FROM ${tableName}
-		WHERE 1 = 1
-		<if test="list != null">
-			AND id in <foreach collection="list" item="item" open="(" separator="," close=")">&{item}</foreach>
-		</if>
+		<choose>
+			<when test="list == null or list.size() == 0">
+				WHERE 1 != 1
+			</when>
+			<when test="list.size() == 1">
+				WHERE `id` = <foreach collection="list" item="id">#{id}</foreach>
+			</when>
+			<otherwise>
+				AND id in <foreach collection="list" item="item" open="(" separator="," close=")">&{item}</foreach>
+			</otherwise>
+		</choose>
 	</delete>
 	
 	<select id="findByAll" parameterType="map" resultType="${model}">   

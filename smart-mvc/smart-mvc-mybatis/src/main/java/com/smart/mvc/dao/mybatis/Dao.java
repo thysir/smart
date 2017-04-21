@@ -35,14 +35,6 @@ public interface Dao<T, ID> {
 	 * @param T
 	 *            t
 	 */
-	public int deleteById(ID id);
-	
-	/**
-	 * 删除实体
-	 * 
-	 * @param T
-	 *            t
-	 */
 	public int deleteById(Collection<ID> idList);
 
 	/**
