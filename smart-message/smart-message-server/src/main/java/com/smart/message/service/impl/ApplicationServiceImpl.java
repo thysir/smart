@@ -15,6 +15,7 @@ import com.smart.message.model.Application;
 import com.smart.message.model.ApplicationAuth;
 import com.smart.message.model.ApplicationType;
 import com.smart.message.service.ApplicationAuthService;
+import com.smart.message.service.ApplicationCallLogService;
 import com.smart.message.service.ApplicationService;
 import com.smart.message.service.ApplicationTypeService;
 import com.smart.message.vo.ApplicationListItem;
@@ -27,6 +28,7 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationDao, Applicat
 	
 	@Resource private ApplicationTypeService applicationTypeService;
 	@Resource private ApplicationAuthService applicationAuthService;
+	@Resource private ApplicationCallLogService applicationCallLogService;
 	
 	@Autowired
 	public void setDao(ApplicationDao dao) {
@@ -86,6 +88,10 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationDao, Applicat
 	@Override
 	public int deleteById(List<Integer> idList) {
 		
+		//删除调用日志信息
+		applicationCallLogService.deleteByApplicationIds(idList);
+		
+		//删除授权信息
 		applicationAuthService.deleteByApplicationIds(idList);
 		
 		return super.deleteById(idList);

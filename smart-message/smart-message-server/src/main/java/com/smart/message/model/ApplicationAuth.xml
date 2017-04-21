@@ -29,7 +29,7 @@
 					JOIN BASE_APPLICATION application ON application.applicationTypeId=type.id
 					WHERE 
 						application.id=#{applicationId}
-				) config on config.authKey=auth.authKey
+				) config on config.authKey=auth.authKey AND auth.applicationId=#{applicationId}
 		</if>
 		<if test="applicationId == null">
 			SELECT

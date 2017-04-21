@@ -32,7 +32,6 @@ import com.smart.util.StringUtils;
 public class UserController extends BaseController{
 
 	@Resource private UserService userService;
-	@Resource private ApplicationService applicationService;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String execute(Model model) {

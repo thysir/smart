@@ -1,6 +1,7 @@
 package com.smart.message.service;
 
 import java.util.Date;
+import java.util.List;
 
 import com.smart.message.dao.ApplicationCallLogDao;
 import com.smart.message.model.ApplicationCallLog;
@@ -22,5 +23,12 @@ public interface ApplicationCallLogService extends Service<ApplicationCallLogDao
 	 */
 	Pagination<ApplicationCallLog> findPagination(Pagination<ApplicationCallLog> p, Integer applicationId, String receiver,
 			String content,	Date beginTime, Date endTime);
+
+	/**
+	 * Description:通过应用id删除调用日志信息
+	 * @author jeason
+	 * @param applicationIdList 应用id列表
+	 */
+	void deleteByApplicationIds(List<Integer> idList);
 
 }

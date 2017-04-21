@@ -26,4 +26,11 @@ public interface ApplicationCallLogDao extends Dao<ApplicationCallLog, Integer> 
 			@Param("applicationId") Integer applicationId, @Param("receiver") String receiver, @Param("content") String content,
 			@Param("beginTime") Date beginTime, @Param("endTime") Date endTime);
 
+	/**
+	 * Description:通过应用id删除授权信息
+	 * @author jeason
+	 * @param applicationIdList 应用id列表
+	 */
+	void deleteByApplicationIds(List<Integer> idList);
+
 }

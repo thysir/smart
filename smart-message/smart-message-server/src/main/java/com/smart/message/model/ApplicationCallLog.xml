@@ -45,4 +45,12 @@
 			AND id in <foreach collection="list" item="item" open="(" separator="," close=")">#{item}</foreach>
 		</if>
 	</delete>
+	
+	<delete id="deleteByApplicationIds" parameterType="list" statementType="PREPARED">
+		DELETE FROM BASE_APPLICATION_CALL_LOG
+		WHERE 1 = 1
+		<if test="list != null">
+			AND applicationId in <foreach collection="list" item="item" open="(" separator="," close=")">#{item}</foreach>
+		</if>
+	</delete>
 </mapper>

@@ -1,9 +1,11 @@
 package com.smart.message.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.smart.message.dao.ApplicationCallLogDao;
 import com.smart.message.model.ApplicationCallLog;
@@ -29,5 +31,14 @@ public class ApplicationCallLogServiceImpl extends ServiceImpl<ApplicationCallLo
 		
 		dao.findPagination(p, applicationId, receiver, content, beginTime, endTime);
 		return p;
+	}
+
+	@Override
+	public void deleteByApplicationIds(List<Integer> idList) {
+		
+		if(CollectionUtils.isEmpty(idList)){
+			return;
+		}
+		dao.deleteByApplicationIds(idList);
 	}
 }
