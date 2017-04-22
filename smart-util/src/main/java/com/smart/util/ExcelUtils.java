@@ -1,7 +1,5 @@
 package com.smart.util;
 
-import java.beans.BeanInfo;
-import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +11,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +23,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.BeanUtils;
 
 /**
  * Excel工具类
@@ -31,6 +31,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * @author Joe
  */
 public class ExcelUtils {
+	
+	//javabean属性缓存对象
+	private static HashMap<String, PropertyDescriptor[]> classPropertyCache=new HashMap<String, PropertyDescriptor[]>();
+	
 	/**
 	 * Excel2003和2007版的最大行数
 	 */
@@ -150,8 +154,7 @@ public class ExcelUtils {
 			endRow = sheet.getLastRowNum();
 		}
 		if (endRow - beginRow < 0) {
-			throw new IllegalArgumentException(
-					"Start row is more than end row!");
+			throw new IllegalArgumentException("Start row is more than end row!");
 		}
 
 		List<T> list = new ArrayList<T>();
@@ -167,8 +170,7 @@ public class ExcelUtils {
 			if (beginColumn < 0) {
 				beginColumn = row.getFirstCellNum();
 			} else if (beginColumn > row.getLastCellNum()) {
-				throw new IllegalArgumentException(
-						"Start column is more than last column!");
+				throw new IllegalArgumentException("Start column is more than last column!");
 			}
 
 			if (endColumn < 0) {
@@ -177,35 +179,52 @@ public class ExcelUtils {
 				endColumn = row.getLastCellNum();
 			}
 			if (endColumn - beginColumn < 0) {
-				throw new IllegalArgumentException(
-						"Start column is more than end column!");
+				throw new IllegalArgumentException("Start column is more than end column!");
 			}
 
 			// 通过反射创建class的实例
 			try {
 				t = type.newInstance();
 			} catch (Exception e) {
-				throw new IllegalArgumentException(
-						"The bean class object cannot be instantiated!", e);
+				throw new IllegalArgumentException("The bean class object cannot be instantiated!", e);
 			}
 
-			// 解析excel行列数据对应到创建的Bean中
-			for (int j = beginColumn, index = 0; j < endColumn
-					&& index < fieldNames.length; j++, index++) {
+			// 解析excel行列数据读取出来
+			Object[] values=new Object[fieldNames.length];
+			for (int j = beginColumn, index = 0; j < endColumn && index < fieldNames.length; j++, index++) {
 				Cell cell = row.getCell(j);
 				if (cell == null)
 					continue;
 				String propertyName = fieldNames[index];
 				try {
-					Object value = getCellValue(cell,
-							getPropertyType(t, propertyName));
-					setPropertyValue(t, propertyName, value);
+					values[index]= getCellValue(cell,getPropertyType(t, propertyName));
 				} catch (Exception e) {
-					throw new IllegalArgumentException(type.getName() + "."
-							+ propertyName + " cannot be accessed!", e);
+					throw new IllegalArgumentException(type.getName() + "." + propertyName + " cannot be accessed!", e);
 				}
 			}
-			list.add(t);
+			
+			//将数据写入javabean中，同时针对一行中没一个单元格内容均为空的对象，直接过滤掉
+			boolean rowIsNull=true;
+			for(int j=0,size=fieldNames.length;j<size;j++){
+				String propertyName=fieldNames[j];
+				Object value=values[j];
+				if(value!=null){
+					if(value instanceof String){
+						String valueStr=(String)value;
+						if(StringUtils.isNotBlank(valueStr)){
+							setPropertyValue(t, propertyName, valueStr.trim());
+							rowIsNull=false;
+						}
+					}else{
+						setPropertyValue(t, propertyName, value);
+						rowIsNull=false;
+					}
+				}
+			}
+			
+			if(!rowIsNull){
+				list.add(t);
+			}
 		}
 		return list;
 	}
@@ -538,9 +557,7 @@ public class ExcelUtils {
 			return;
 		}
 		try {
-			BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
-			PropertyDescriptor[] propertyDescriptors = beanInfo
-					.getPropertyDescriptors();
+			PropertyDescriptor[] propertyDescriptors = getPropertyDescriptors(obj.getClass());
 			for (PropertyDescriptor property : propertyDescriptors) {
 				if (property.getName().equals(propertyName)) {
 					Method setter = property.getWriteMethod();
@@ -569,9 +586,7 @@ public class ExcelUtils {
 			return m.get(propertyName);
 		}else{
 			try {
-				BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
-				PropertyDescriptor[] propertyDescriptors = beanInfo
-				.getPropertyDescriptors();
+				PropertyDescriptor[] propertyDescriptors = getPropertyDescriptors(obj.getClass());
 				for (PropertyDescriptor property : propertyDescriptors) {
 					if (property.getName().equals(propertyName)) {
 						Method getter = property.getReadMethod();
@@ -598,9 +613,7 @@ public class ExcelUtils {
 			return null;
 		}
 		try {
-			BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
-			PropertyDescriptor[] propertyDescriptors = beanInfo
-					.getPropertyDescriptors();
+			PropertyDescriptor[] propertyDescriptors = getPropertyDescriptors(obj.getClass());
 			for (PropertyDescriptor property : propertyDescriptors) {
 				if (property.getName().equals(propertyName)) {
 					return property.getPropertyType();
@@ -624,9 +637,7 @@ public class ExcelUtils {
 		}
 		String[] fieldNames = null;
 		try {
-			BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
-			PropertyDescriptor[] propertyDescriptors = beanInfo
-					.getPropertyDescriptors();
+			PropertyDescriptor[] propertyDescriptors = getPropertyDescriptors(obj.getClass());
 			fieldNames = new String[propertyDescriptors.length - 1];
 			int i = 0;
 			for (PropertyDescriptor property : propertyDescriptors) {
@@ -640,5 +651,21 @@ public class ExcelUtils {
 			throw new IllegalArgumentException(e);
 		}
 		return fieldNames;
+	}
+	
+	private static PropertyDescriptor[] getPropertyDescriptors(Class<?> classz){
+		
+		if(classz==null) return null;
+		
+		PropertyDescriptor[] r=classPropertyCache.get(classz.getName());
+		if(r==null){
+			synchronized (classPropertyCache) {
+				r=classPropertyCache.get(classz.getName());
+				if(r==null){
+					classPropertyCache.put(classz.getName(), BeanUtils.getPropertyDescriptors(classz));
+				}
+			}		
+		}
+		return r;
 	}
 }
