@@ -33,7 +33,7 @@
 				WHERE 1 != 1
 			</when>
 			<when test="list.size() == 1">
-				WHERE `id` = <foreach collection="list" item="id">#{id}</foreach>
+				WHERE `id` = <foreach collection="list" item="id">&{id}</foreach>
 			</when>
 			<otherwise>
 				AND id in <foreach collection="list" item="item" open="(" separator="," close=")">&{item}</foreach>
