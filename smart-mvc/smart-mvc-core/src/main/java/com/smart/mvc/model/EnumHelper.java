@@ -9,7 +9,7 @@ import java.util.List;
  * @author Joe
  */
 public class EnumHelper {
-	public static <E extends EnumItemable<?>> E get(Class<E> enumType, String label) {
+	public static <E extends EnumItemable<?>> E getByLabel(Class<E> enumType, String label) {
 		for (E e : enumType.getEnumConstants()) {
 			if (e.getLabel().equals(label)) {
 				return e;
@@ -18,7 +18,7 @@ public class EnumHelper {
 		return null;
 	}
 	
-	public static <E extends EnumItemable<?>> E get(Class<E> enumType, Object value) {
+	public static <E extends EnumItemable<?>> E getByValue(Class<E> enumType, Object value) {
 		for (E e : enumType.getEnumConstants()) {
 			if (e.getValue().equals(value)) {
 				return e;
