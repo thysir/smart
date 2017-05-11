@@ -10,6 +10,7 @@
 	<insert id="save" parameterType="Permission" statementType="PREPARED" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO SYS_PERMISSION(
 			appId,
+			modularId,
 			parentId,
 			icon,
 			name,
@@ -20,6 +21,7 @@
 		) 
 		VALUES (
 			#{appId},
+			#{modularId},
 			#{parentId},
 			#{icon},
 			#{name},
@@ -33,6 +35,7 @@
     <update id="update" parameterType="Permission" statementType="PREPARED">
 		UPDATE SYS_PERMISSION a SET
 			a.`appId` = #{appId},
+			a.`modularId` = #{modularId},
 			a.`parentId` = #{parentId},
 			a.`icon` = #{icon},
 			a.`name` = #{name},
@@ -65,6 +68,14 @@
 		<if test="isEnable != null and isEnable == true">
 			AND a.isEnable = #{isEnable} 
 		</if>
+		<choose>
+			<when test="modularId !=null ">
+				AND a.modularId = #{modularId} 
+			</when>
+			<otherwise>
+				AND a.modularId is null
+			</otherwise>
+		</choose>
      	ORDER BY a.sort DESC 
 	</select>
 	
@@ -88,11 +99,12 @@
      	SELECT DISTINCT
      		   p.id        AS id,
 		       p.parentId  AS parentId,
+		       m.code  	   AS modular,
 		       p.name      AS name,
 		       p.url       AS url,
 		       p.icon      AS icon,
 		       p.isMenu    AS isMenu
-		FROM   SYS_PERMISSION p
+		FROM   SYS_PERMISSION p LEFT JOIN SYS_MODULAR m ON p.modularId=m.id and p.appId=m.appId
 		<if test="userId != null">
 			   INNER JOIN SYS_RE_ROLE_PERMISSION rp ON p.id = rp.permissionId
 			   INNER JOIN SYS_ROLE r ON r.id = rp.roleId AND r.isEnable = 1
@@ -111,5 +123,12 @@
 			   		AND ur.userId = #{userId}
 			   </if>
 		ORDER  BY p.parentId ASC, p.sort DESC			
+	</select>
+	
+	<select id="findByModularId" parameterType="map" resultType="Permission">   
+     	SELECT * 
+     	FROM SYS_PERMISSION a
+     	WHERE a.modularId = #{modularId} 
+     	ORDER BY a.sort DESC 	
 	</select>
 </mapper>

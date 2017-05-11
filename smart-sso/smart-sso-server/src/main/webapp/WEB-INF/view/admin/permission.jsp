@@ -36,6 +36,10 @@
 										</c:forEach>
 									</select>
 								</label>
+								<label>
+									<label class="control-label" for="form-field-1"> 模块： </label>
+									<select id="_searchModularId" name="modularId"></select>
+								</label>
 							</form>
 						</div>
 					</div>
@@ -68,14 +72,13 @@
 				</div>
 
 				<div class="modal-body">
-					<form id="_editForm" class="form-horizontal" role="form"
-						validate="true">
+					<form id="_editForm" class="form-horizontal" role="form" validate="true">
 						<input type="hidden" id="_id" name="id">
 						<input type="hidden" id="_parentId" name="parentId">
+						<input type="hidden" id="_hidden_modularId" name="modularId"/>
 			
 						<div class="form-group">
 							<label for="_appId" class="col-sm-3 control-label no-padding-right">应用</label>
-			
 							<div class="col-sm-3">
 								<select id="_appId" class="form-control help-validate"
 									required="true">
@@ -86,7 +89,6 @@
 								<input id="_hidden_appId" type="hidden" name="appId"/>
 							</div>
 						</div> 
-						
 						<div class="form-group">
 							<label for="_name" class="col-sm-3 control-label no-padding-right">名称</label>
 			
@@ -352,6 +354,7 @@
 				$("#_icon_fa").removeAttr("class");
 				$("#_appId").val(treeNode.appId);
 				$("#_hidden_appId").val(treeNode.appId);
+				$("#_hidden_modularId").val(treeNode.modularId);
 				if(flag == 'add'){
 					$("#_parentId").val(treeNode.id);
 					$("#_sort").val(1);
@@ -377,8 +380,28 @@
 			}
 			// 搜索
 			$("#_searchAppId").change(function () { 
-				reloadTree();
+				
+				//重新加载应用模块
+           		$.get("${_path}/admin/modular/listByAppId", {"appId":$("#_searchAppId option:selected").val()},function(d) {
+					if(d){
+						if(d.status == '0000'){
+							var html='<option value=""></option>';
+							if(d.data!=undefined && d.data.length>0){
+								$.each(d.data,function(i,item){
+									html+='<option value="'+item.id+'">'+item.name+'</option>';
+								});
+							}
+							$("#_searchModularId").html(html);
+						}
+					}
+		        },'json');
+				
+           		reloadTree();
            	});
+			
+			$("#_searchModularId").change(function () { 
+				reloadTree();
+			});
            	
            	function reloadTree(){
            		setting.async.otherParam = $.formJson("_form");

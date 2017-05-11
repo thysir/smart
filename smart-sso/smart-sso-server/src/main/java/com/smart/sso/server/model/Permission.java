@@ -16,6 +16,8 @@ public class Permission extends PersistentObject {
 
 	/** 应用ID */
 	private Integer appId;
+	/** 模块ID */
+	private Integer modularId;
 	/** 父ID */
 	private Integer parentId;
 	/** 图标 */
@@ -39,6 +41,14 @@ public class Permission extends PersistentObject {
 
 	public void setAppId(Integer appId) {
 		this.appId = appId;
+	}
+	
+	public Integer getModularId() {
+		return modularId;
+	}
+
+	public void setModularId(Integer modularId) {
+		this.modularId = modularId;
 	}
 
 	public Integer getParentId() {

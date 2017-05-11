@@ -19,9 +19,11 @@ public interface PermissionDao extends Dao<Permission, Integer> {
 	
 	public int resetPassword(@Param("password") String password, @Param("idList") List<Integer> idList);
 
-	public List<Permission> findByName(@Param("name") String name, @Param("appId") Integer appId, @Param("isEnable") Boolean isEnable);
+	public List<Permission> findByName(@Param("name") String name, @Param("appId") Integer appId, @Param("modularId") Integer modularId, @Param("isEnable") Boolean isEnable);
 	
 	public int deleteByAppIds(@Param("idList") List<Integer> idList);
 	
 	public List<Menu> findListById(@Param("appCode") String appCode, @Param("userId") Integer userId);
+
+	public List<Permission> findByModularId(@Param("modularId") Integer modularId);
 }

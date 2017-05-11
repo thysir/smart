@@ -43,8 +43,8 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionDao, Permission
 		return super.saveOrUpdate(t);
 	}
 
-	public List<Permission> findByName(String name, Integer appId, Boolean isEnable) {
-		return dao.findByName(name, appId, isEnable);
+	public List<Permission> findByName(String name, Integer appId,Integer modularId, Boolean isEnable) {
+		return dao.findByName(name, appId, modularId, isEnable);
 	}
 
 	@Permissible
@@ -52,7 +52,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionDao, Permission
 	public int deletePermission(Integer id, Integer appId) {
 		List<Integer> idList = new ArrayList<Integer>();
 		
-		List<Permission> list = permissionService.findByName(null, appId, null);
+		List<Permission> list = permissionService.findByName(null, appId, null, null);
 		loopSubList(id, idList, list);
 		idList.add(id);
 		
@@ -80,5 +80,10 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionDao, Permission
 
 	public List<Menu> findListById(String appCode, Integer userId) {
 		return dao.findListById(appCode, userId);
+	}
+
+	@Override
+	public List<Permission> findByModularId(Integer modularId) {
+		return dao.findByModularId(modularId);
 	}
 }

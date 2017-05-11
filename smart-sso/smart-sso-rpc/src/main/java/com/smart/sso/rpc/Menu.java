@@ -15,6 +15,8 @@ public class Menu implements Serializable {
 	private Integer id;
 	/** 父ID */
 	private Integer parentId;
+	/** 模块code*/
+	private String modular;
 	/** 图标 */
 	private String icon;
 	/** 名称 */
@@ -38,6 +40,14 @@ public class Menu implements Serializable {
 
 	public void setParentId(Integer parentId) {
 		this.parentId = parentId;
+	}
+
+	public String getModular() {
+		return modular;
+	}
+
+	public void setModular(String modular) {
+		this.modular = modular;
 	}
 
 	public String getIcon() {

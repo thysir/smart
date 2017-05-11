@@ -35,6 +35,7 @@ public class PermissionController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String execute(Model model) {
+		
 		model.addAttribute("appList", getAppList());
 		return "/admin/permission";
 	}
@@ -42,14 +43,16 @@ public class PermissionController extends BaseController {
 	@RequestMapping(value = "/nodes", method = RequestMethod.GET)
 	public @ResponseBody List<Permission> nodes(
 			@ValidateParam(name = "应用ID ") Integer appId,
+			@ValidateParam(name = "模块ID") Integer modularId,
 			@ValidateParam(name = "名称") String name,
 			@ValidateParam(name = "是否启用 ") Boolean isEnable) {
-		List<Permission> list = permissionService.findByName(name, appId, isEnable);
+		List<Permission> list = permissionService.findByName(name, appId, modularId, isEnable);
 		Permission permission = new Permission();
 		permission.setId(null);
 		permission.setParentId(-1);
 		permission.setName("根节点");
 		permission.setAppId(appId);
+		permission.setModularId(modularId);
 		list.add(0, permission);
 		return list;
 	}
@@ -57,6 +60,7 @@ public class PermissionController extends BaseController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public @ResponseBody Result save(@ValidateParam(name = "ID") Integer id,
 			@ValidateParam(name = "应用ID", validators = { Validator.NOT_BLANK }) Integer appId,
+			@ValidateParam(name = "模块ID") Integer modularId,
 			@ValidateParam(name = "父ID") Integer parentId,
 			@ValidateParam(name = "图标") String icon,
 			@ValidateParam(name = "名称", validators = { Validator.NOT_BLANK }) String name,
@@ -72,6 +76,7 @@ public class PermissionController extends BaseController {
 			permission = permissionService.get(id);
 		}
 		permission.setAppId(appId);
+		permission.setModularId(modularId);
 		permission.setParentId(parentId);
 		permission.setIcon(icon);
 		permission.setName(name);

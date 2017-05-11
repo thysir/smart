@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.smart.sso.server.dao.ModularDao">
+	<select id="get" parameterType="java.lang.Integer" resultType="Modular">
+     	SELECT * 
+     	FROM SYS_MODULAR a
+     	WHERE id = #{id}
+    </select>
+    
+	<insert id="save" parameterType="Modular" statementType="PREPARED" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO SYS_MODULAR(
+			appId,
+			name,
+			code
+		) 
+		VALUES (
+			#{appId},
+			#{name},
+			#{code}
+		)
+	</insert>
+	
+    <update id="update" parameterType="Modular" statementType="PREPARED">
+		UPDATE SYS_MODULAR a SET
+			a.`appId` = #{appId},
+			a.`name` = #{name},
+			a.`code` = #{code}
+		WHERE a.`id` = #{id}
+	</update>
+
+	<delete id="deleteById" parameterType="list" statementType="PREPARED">
+		DELETE FROM SYS_MODULAR
+		WHERE 1 = 1
+		<if test="list != null">
+			AND `id` in <foreach collection="list" item="item" open="(" separator="," close=")">#{item}</foreach>
+		</if>
+	</delete>
+	
+	<select id="findByAppId" parameterType="Map" resultType="Modular">
+     	SELECT * FROM SYS_MODULAR a WHERE appId = #{appId} order by id desc
+    </select>
+	
+	<select id="findPaginationByAppId" parameterType="Map" resultType="Modular">
+     	SELECT * FROM SYS_MODULAR a WHERE appId = #{appId} order by id desc
+    </select>
+	
+</mapper>

@@ -130,6 +130,9 @@
 							url : "${_path}/admin/app/delete"
 						});
 					}},
+					{text : '模块管理', clazz : 'blue', icon : 'fa fa-plus-circle', permission : '/admin/app/modular', handler : function(d, i){
+						window.location.href = "${_path}/admin/admin#/admin/modular?appId=" + d.id;
+					}},
 					{text : '同步权限', clazz : 'blue', icon : 'fa fa-refresh', permission : '/admin/app/sync/permissions', handler : function(d, i){
 						$table.ajax({
 							url : "${pageContext.request.contextPath}/admin/app/sync/permissions",

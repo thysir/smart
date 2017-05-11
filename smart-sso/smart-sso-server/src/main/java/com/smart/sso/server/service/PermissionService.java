@@ -28,7 +28,7 @@ public interface PermissionService extends Service<PermissionDao, Permission, In
 	 * @param appId 应用ID
 	 * @return
 	 */
-	public List<Permission> findByName(String name, Integer appId, Boolean isEnable);
+	public List<Permission> findByName(String name, Integer appId, Integer modularId, Boolean isEnable);
 	
 	/**
 	 * 删除权限
@@ -52,4 +52,12 @@ public interface PermissionService extends Service<PermissionDao, Permission, In
 	 * @return
 	 */
 	public List<Menu> findListById(String appCode, Integer userId);
+
+	/**
+	 * Description:获取模块下所有的权限
+	 * @author jeason
+	 * @param modularId
+	 * @return
+	 */
+	public List<Permission> findByModularId(Integer modularId);
 }
