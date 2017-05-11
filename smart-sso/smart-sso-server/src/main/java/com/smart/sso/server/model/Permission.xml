@@ -131,4 +131,17 @@
      	WHERE a.modularId = #{modularId} 
      	ORDER BY a.sort DESC 	
 	</select>
+	
+	<select id="findByAppId" parameterType="map" resultType="Permission">   
+		SELECT * 
+     	FROM SYS_PERMISSION a
+     	WHERE 1 = 1
+		<if test="appId != null">
+			AND a.appId = #{appId} 
+		</if>
+		<if test="isEnable != null and isEnable == true">
+			AND a.isEnable = #{isEnable} 
+		</if>
+     	ORDER BY a.sort DESC 
+	</select>
 </mapper>

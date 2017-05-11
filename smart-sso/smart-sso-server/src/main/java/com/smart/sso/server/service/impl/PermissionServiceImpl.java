@@ -86,4 +86,9 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionDao, Permission
 	public List<Permission> findByModularId(Integer modularId) {
 		return dao.findByModularId(modularId);
 	}
+
+	@Override
+	public List<Permission> findByAppId(Integer appId, Boolean isEnable) {
+		return dao.findByAppId(appId,isEnable);
+	}
 }

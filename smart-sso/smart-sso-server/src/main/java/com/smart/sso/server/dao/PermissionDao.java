@@ -26,4 +26,6 @@ public interface PermissionDao extends Dao<Permission, Integer> {
 	public List<Menu> findListById(@Param("appCode") String appCode, @Param("userId") Integer userId);
 
 	public List<Permission> findByModularId(@Param("modularId") Integer modularId);
+
+	public List<Permission> findByAppId(@Param("appId") Integer appId, @Param("isEnable") Boolean isEnable);
 }

@@ -56,6 +56,21 @@ public class PermissionController extends BaseController {
 		list.add(0, permission);
 		return list;
 	}
+	
+	@RequestMapping(value = "/nodesByAppId", method = RequestMethod.GET)
+	public @ResponseBody List<Permission> nodesByAppId(
+			@ValidateParam(name = "应用ID ") Integer appId,
+			@ValidateParam(name = "是否启用 ") Boolean isEnable) {
+		
+		List<Permission> list = permissionService.findByAppId(appId, isEnable);
+		Permission permission = new Permission();
+		permission.setId(null);
+		permission.setParentId(-1);
+		permission.setName("根节点");
+		permission.setAppId(appId);
+		list.add(0, permission);
+		return list;
+	}
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public @ResponseBody Result save(@ValidateParam(name = "ID") Integer id,

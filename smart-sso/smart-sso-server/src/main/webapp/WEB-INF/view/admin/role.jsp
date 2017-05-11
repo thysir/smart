@@ -231,7 +231,7 @@
 					type: "get",
 					otherParam: {"appId" : $("#_appId option:selected").val(), "isEnable" : true},
 					dataType: "text",
-					url: "${_path}/admin/permission/nodes"
+					url: "${_path}/admin/permission/nodesByAppId"
 				},
 	            check: {
 	                enable: true,

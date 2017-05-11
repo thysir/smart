@@ -60,4 +60,13 @@ public interface PermissionService extends Service<PermissionDao, Permission, In
 	 * @return
 	 */
 	public List<Permission> findByModularId(Integer modularId);
+
+	/**
+	 * Description:获取应用下所有的权限
+	 * @author jeason
+	 * @param appId
+	 * @param isEnable
+	 * @return
+	 */
+	public List<Permission> findByAppId(Integer appId, Boolean isEnable);
 }
